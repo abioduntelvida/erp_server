@@ -76,7 +76,7 @@ export const postAsyncProjectTicket = createAsyncThunk<
   }
 })
 
-export interface IProject {
+export interface IProjectTicket {
   data: any[] | null
   loading: string
   error: null | string
@@ -86,7 +86,7 @@ const initialState = {
   data: null,
   loading: 'IDLE',
   error: ''
-} as IProject
+} as IProjectTicket
 
 const ProjectTicketSlice = createSlice({
   name: 'project-ticket',
@@ -129,6 +129,6 @@ const ProjectTicketSlice = createSlice({
   }
 })
 
-export const getProjectTicketLoading = (state: RootState) => state.project?.loading
-export const getProjectTicketData = (state: RootState) => state.project?.data
+export const getProjectTicketLoading = (state: RootState) => state.projectTicket?.loading
+export const getProjectTicketData = (state: RootState) => state.projectTicket?.data
 export default ProjectTicketSlice.reducer

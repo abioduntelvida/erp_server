@@ -29,10 +29,10 @@ import TableHeader from 'src/views/apps/permissions/TableHeader'
 // import { ThemeColor } from 'src/@core/layouts/types'
 import { SupportRowType } from 'src/types/apps/ticketTypes'
 import { useAppDispatch, useAppSelector } from 'src/hooks/useTypedSelector'
-import { fetchAsyncTickets, getTicketData } from 'src/store/apps/tickets'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
+import { fetchAsyncProjectTickets, getProjectTicketData } from 'src/store/apps/project-ticket'
 
 // import { HTTP_STATUS } from 'src/constants'
 
@@ -83,7 +83,7 @@ const defaultColumns: GridColDef[] = [
   }
 ]
 
-const SupportTicketTable = () => {
+const ProjectTicketTable = () => {
   // ** State
   const [value, setValue] = useState<string>('')
   const [editValue, setEditValue] = useState<string>('')
@@ -93,7 +93,7 @@ const SupportTicketTable = () => {
 
   // ** Hooks
   const dispatch = useAppDispatch()
-  const ticketData = useAppSelector(getTicketData)
+  const ticketData = useAppSelector(getProjectTicketData)
 
   // const isLoading = useAppSelector(getTicketLoading)
 
@@ -114,7 +114,7 @@ const SupportTicketTable = () => {
   console.log(tdata)
 
   useEffect(() => {
-    dispatch(fetchAsyncTickets(userInfo))
+    dispatch(fetchAsyncProjectTickets(userInfo))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -174,7 +174,7 @@ const SupportTicketTable = () => {
           ) : (
             <Card>
               <TableHeader value={value} handleFilter={handleFilter} />
-              {/* <DataGrid
+              <DataGrid
                 autoHeight
                 getRowId={row => row._id}
                 rows={tdata}
@@ -183,7 +183,7 @@ const SupportTicketTable = () => {
                 pageSizeOptions={[10, 25, 50]}
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}
-              /> */}
+              />
             </Card>
           )}
         </Grid>
@@ -236,4 +236,4 @@ const SupportTicketTable = () => {
   )
 }
 
-export default SupportTicketTable
+export default ProjectTicketTable

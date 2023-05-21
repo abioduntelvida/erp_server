@@ -107,7 +107,7 @@ const PermissionsTable = () => {
       })
   }
 
-  const url = '/permission/20/1'
+  const url = '/permission/all'
 
   const userInfos = {
     url: url,

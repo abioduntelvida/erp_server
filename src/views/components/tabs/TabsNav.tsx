@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography'
 import TabsWrapper from 'src/@core/styles/mui/TabsWrapper'
 import HelpDeskTable from 'src/views/apps/tickets/HelpDesk'
 import SupportTicketTable from 'src/views/apps/tickets/SupportTicket'
+import ProjectTicketTable from 'src/views/apps/tickets/ProjectTicket'
 
 export const TickketTabsNav = () => {
   // ** State
@@ -56,7 +57,7 @@ export const TickketTabsNav = () => {
           </Typography>
         </TabPanel>
         <TabPanel value='3'>
-          <SupportTicketTable />
+          <ProjectTicketTable />
         </TabPanel>
       </TabContext>
     </TabsWrapper>

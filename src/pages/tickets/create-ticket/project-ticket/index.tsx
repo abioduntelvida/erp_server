@@ -1,5 +1,5 @@
 // ** React Imports
-import React, { RefAttributes, forwardRef } from 'react'
+import React, { RefAttributes, forwardRef, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Card from '@mui/material/Card'
@@ -39,6 +39,7 @@ import { useAppSelector } from 'src/hooks/useTypedSelector'
 import { HTTP_STATUS } from 'src/constants'
 import { ThreeDots } from 'react-loading-icons'
 import { getProjectTicketLoading, postAsyncProjectTicket } from 'src/store/apps/project-ticket'
+import { fetchAsyncProject } from 'src/store/apps/project'
 
 const CustomInput: React.ForwardRefExoticComponent<RefAttributes<any>> | any = forwardRef((props, ref) => {
   return <TextField fullWidth {...props} inputRef={ref} autoComplete='off' />
@@ -68,8 +69,15 @@ interface UserData {
   overview: string
 }
 
+interface Customer {
+  _id: string
+  customer_name: string
+}
+
 const FormLayoutsSeparator = () => {
   // ** States
+  const [projects, setProjects] = useState<Customer[]>([])
+
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
     mode: 'onChange'
@@ -83,8 +91,10 @@ const FormLayoutsSeparator = () => {
 
   const token = auth.token
 
-  console.log(token)
-
+  const userInfo = {
+    url: '/task/project/all',
+    token: token
+  }
   const onSubmit = (data: UserData) => {
     const url = '/ticket/project/create'
 
@@ -94,10 +104,11 @@ const FormLayoutsSeparator = () => {
       title: data.title,
       incident_type: data.incident,
       client_email: data.email,
-      project_cordinator: data.project,
+      project_cordinator: data.assign,
       start_date: data.startDate,
       end_date: data.endDate,
       priority: data.priority,
+      project: data.project,
       overview: data.overview
     }
 
@@ -119,6 +130,23 @@ const FormLayoutsSeparator = () => {
         }
       })
   }
+
+  useEffect(() => {
+    dispatch(fetchAsyncProject(userInfo))
+      .unwrap()
+      .then(originalPromiseResult => {
+        console.log(originalPromiseResult)
+        setProjects(originalPromiseResult?.data?.data)
+      })
+      .catch(rejectedValueorSerializedError => {
+        {
+          rejectedValueorSerializedError
+        }
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  console.log(projects)
 
   return (
     <Card>
@@ -148,13 +176,29 @@ const FormLayoutsSeparator = () => {
               <InputLabel id='form-layouts-separator-select-label' sx={{ mb: 3 }}>
                 Who is Responsible?
               </InputLabel>
-              <Controller
-                name='assign'
-                control={control}
-                render={({ field: { value, onChange, onBlur } }) => (
-                  <TextField fullWidth value={value} onBlur={onBlur} onChange={onChange} placeholder='' />
-                )}
-              />
+              <FormControl fullWidth>
+                <InputLabel id='form-layouts-separator-select-label' sx={{ mb: 3 }}>
+                  Select{' '}
+                </InputLabel>
+                <Controller
+                  name='assign'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Select
+                      label='Who'
+                      placeholder='Select'
+                      id='form-layouts-separator-select'
+                      labelId='form-layouts-separator-select-label'
+                      onChange={onChange}
+                      value={value}
+                    >
+                      <MenuItem value='3k2nf2mf0fni23'>Senetor</MenuItem>
+                      <MenuItem value='92jdf3j9f2mmg4'>Steve</MenuItem>
+                      <MenuItem value='93cn1d9j2239dj'>Abiodun</MenuItem>
+                    </Select>
+                  )}
+                />
+              </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
               <InputLabel id='form-layouts-separator-select-label' sx={{ mb: 3 }}>
@@ -255,16 +299,18 @@ const FormLayoutsSeparator = () => {
                   control={control}
                   render={({ field: { value, onChange } }) => (
                     <Select
-                      label='Priority'
+                      label='Project'
                       placeholder='Select'
                       id='form-layouts-separator-select'
                       labelId='form-layouts-separator-select-label'
                       onChange={onChange}
                       value={value}
                     >
-                      <MenuItem value='123er7djd456876'>Sam</MenuItem>
-                      <MenuItem value='0987vbjb5678923'>Senetor</MenuItem>
-                      <MenuItem value='124898hbd929872'>Steve</MenuItem>
+                      {projects.map(project => (
+                        <MenuItem key={project._id} value={project._id}>
+                          {project.customer_name}
+                        </MenuItem>
+                      ))}
                     </Select>
                   )}
                 />

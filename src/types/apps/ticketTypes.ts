@@ -24,3 +24,12 @@ export type ProjectRowType = {
   deadline: string
   status: string
 }
+
+export type ProjectTicketRowType = {
+  id: number
+  customer_name: string
+  start_date: string
+  end_date: string
+  deadline: string
+  status: string
+}
