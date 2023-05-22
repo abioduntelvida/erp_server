@@ -127,6 +127,16 @@ const SupportTicketTable = () => {
   //   setEditDialogOpen(true)
   // }
 
+  const handleCellClick = (params: any) => {
+    // Access the row data from params.row
+    const rowData = params.row
+
+    console.log(rowData)
+
+    // Navigate to the desired page with the row data
+    router.push(`tickets/help-desk/${rowData._id}`)
+  }
+
   const handleDialogToggle = () => setEditDialogOpen(!editDialogOpen)
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -180,6 +190,7 @@ const SupportTicketTable = () => {
                 rows={tdata}
                 columns={columns}
                 disableRowSelectionOnClick
+                onCellClick={handleCellClick}
                 pageSizeOptions={[10, 25, 50]}
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}

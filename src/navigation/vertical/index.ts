@@ -95,7 +95,7 @@ const navigation = (): VerticalNavItemsType => {
           path: '/apps/project/view'
         }
       ]
-    }
+    },
 
     // {
     //   title: 'Invoice',
@@ -120,59 +120,58 @@ const navigation = (): VerticalNavItemsType => {
     //   ]
     // }
 
-    // {
-    //   title: 'User',
-    //   icon: 'bx:user',
-    //   children: [
-    //     {
-    //       title: 'List',
-    //       path: '/apps/user/list'
-    //     },
-    //     {
-    //       title: 'View',
-    //       children: [
-    //         {
-    //           title: 'Account',
-    //           path: '/apps/user/view/account'
-    //         },
-    //         {
-    //           title: 'Security',
-    //           path: '/apps/user/view/security'
-    //         },
-    //         {
-    //           title: 'Billing & Plans',
-    //           path: '/apps/user/view/billing-plan'
-    //         },
-    //         {
-    //           title: 'Notifications',
-    //           path: '/apps/user/view/notification'
-    //         },
-    //         {
-    //           title: 'Connection',
-    //           path: '/apps/user/view/connection'
-    //         }
-    //       ]
-    //     }
-    //   ]
-    // },
-    // {
-    //   title: 'Account Management',
-    //   icon: 'bx:check-shield',
-    //   children: [
-    //     {
-    //       title: 'User',
-    //       path: '/apps/user'
-    //     },
-    //     {
-    //       title: 'Roles',
-    //       path: '/apps/roles'
-    //     },
-    //     {
-    //       title: 'Permissions',
-    //       path: '/apps/permissions'
-    //     }
-    //   ]
-    // },
+    {
+      title: 'User',
+      icon: 'bx:user',
+      children: [
+        {
+          title: 'List',
+          path: '/apps/user/list'
+        }
+
+        // {
+        //   title: 'View',
+        //   children: [
+        //     {
+        //       title: 'Account',
+        //       path: '/apps/user/view/account'
+        //     },
+        //     {
+        //       title: 'Security',
+        //       path: '/apps/user/view/security'
+        //     },
+        //     {
+        //       title: 'Billing & Plans',
+        //       path: '/apps/user/view/billing-plan'
+        //     },
+        //     {
+        //       title: 'Notifications',
+        //       path: '/apps/user/view/notification'
+        //     },
+        //     {
+        //       title: 'Connection',
+        //       path: '/apps/user/view/connection'
+        //     }
+        //   ]
+        // }
+      ]
+    },
+
+    {
+      title: 'Account Management',
+      icon: 'bx:check-shield',
+      children: [
+        {
+          title: 'Roles',
+          path: '/apps/roles'
+        },
+        {
+          title: 'Permissions',
+          path: '/apps/permissions'
+        }
+      ]
+    }
+
     // {
     //   title: 'Pages',
     //   icon: 'bx:dock-top',

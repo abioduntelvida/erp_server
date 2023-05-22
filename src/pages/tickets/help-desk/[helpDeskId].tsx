@@ -86,21 +86,21 @@ const FormLayoutsSeparator = () => {
       overview: data.overview
     }
 
-    dispatch(postAsyncHelpDesk(formData))
-      .unwrap()
-      .then(originalPromiseResult => {
-        console.log(originalPromiseResult)
-        toast.success(originalPromiseResult.message)
+    // dispatch(postAsyncHelpDesk(formData))
+    //   .unwrap()
+    //   .then(originalPromiseResult => {
+    //     console.log(originalPromiseResult)
+    //     toast.success(originalPromiseResult.message)
 
-        reset()
-      })
-      .catch(rejectedValueorSerializedError => {
-        {
-          rejectedValueorSerializedError && toast.error(rejectedValueorSerializedError.message)
+    //     reset()
+    //   })
+    //   .catch(rejectedValueorSerializedError => {
+    //     {
+    //       rejectedValueorSerializedError && toast.error(rejectedValueorSerializedError.message)
 
-          reset()
-        }
-      })
+    //       reset()
+    //     }
+    //   })
   }
 
   return (
