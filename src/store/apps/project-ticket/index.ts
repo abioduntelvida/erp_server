@@ -4,7 +4,7 @@ import config from 'src/configs/config'
 import { HTTP_STATUS } from 'src/constants'
 import { RootState } from 'src/store'
 
-interface MyData {
+export interface MyData {
   data: any[]
   message: string
 }

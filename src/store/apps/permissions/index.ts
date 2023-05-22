@@ -11,6 +11,7 @@ interface MyData {
 
 // SIGN UP
 interface UserAttributes {
+  id: any
   token: any
 }
 
@@ -84,9 +85,9 @@ export const deleteAsyncPermission = createAsyncThunk<
     rejectValue: MyKnownError
   }
 >('permission/deleteAsyncThunk', async (formData, { rejectWithValue }) => {
-  const { url, token, ...data } = formData
+  const { url, token, id } = formData
   try {
-    const response = await axios.delete(config.baseUrl + url + data.id, {
+    const response = await axios.delete(config.baseUrl + url + id, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`

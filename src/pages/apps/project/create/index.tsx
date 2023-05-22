@@ -21,7 +21,7 @@ import Select from '@mui/material/Select'
 // ** Types
 
 // ** Third Party Imports
-import moment from 'moment'
+// import moment from 'moment'
 import DatePicker from 'react-datepicker'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { toast } from 'react-hot-toast'
@@ -42,8 +42,8 @@ import { getProjectLoading, postAsyncProject } from 'src/store/apps/project'
 interface UserData {
   name: string
   a_date: any
-  s_date: Date | string
-  e_date: string | Date
+  s_date: any
+  e_date: any
   summary: string
   demo: string
   site: string
@@ -55,14 +55,14 @@ const CustomInput: React.ForwardRefExoticComponent<RefAttributes<any>> | any = f
 })
 
 const FormLayoutsSeparator = () => {
-  const dateString = '2023-05-21'
-  const dateObject = moment(dateString).toDate()
+  // const dateString = '2023-05-21'
+  // const dateObject = moment(dateString).toDate()
 
-  const defaultValues = {
+  const defaultValues: UserData = {
     name: '',
     a_date: '',
-    s_date: dateObject,
-    e_date: dateObject || '',
+    s_date: '',
+    e_date: '',
     summary: '',
     demo: '',
     site: '',

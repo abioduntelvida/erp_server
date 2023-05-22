@@ -58,7 +58,7 @@ interface SidebarAddUserType {
 interface UserData {
   first_name: string
   last_name: string
-  dob: string
+  dob: any
   email: string
   company: string
   password: string
@@ -113,7 +113,7 @@ const CustomInput: React.ForwardRefExoticComponent<RefAttributes<any>> | any = f
   return <TextField fullWidth {...props} inputRef={ref} autoComplete='off' />
 })
 
-const defaultValues = {
+const defaultValues: UserData = {
   first_name: '',
   last_name: '',
   dob: '',

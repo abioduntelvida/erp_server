@@ -45,7 +45,17 @@ const CustomInput: React.ForwardRefExoticComponent<RefAttributes<any>> | any = f
   return <TextField fullWidth {...props} inputRef={ref} autoComplete='off' />
 })
 
-const defaultValues = {
+interface UserData {
+  title: string
+  assign: string[]
+  priority: string
+  incident: string
+  startDate: any
+  endDate: any
+  overview: string
+}
+
+const defaultValues: UserData = {
   title: '',
   assign: [],
   priority: '',

@@ -30,6 +30,7 @@ import TableHeader from 'src/views/apps/permissions/TableHeader'
 import { ThemeColor } from 'src/@core/layouts/types'
 import { ProjectRowType } from 'src/types/apps/ticketTypes'
 import { useAppDispatch, useAppSelector } from 'src/hooks/useTypedSelector'
+import { MyData } from 'src/store/apps/project-ticket'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
@@ -127,7 +128,7 @@ const HelpDeskTable = () => {
     token: token
   }
 
-  const tdata = ticketData?.data
+  const tdata = (ticketData as unknown as MyData)?.data
 
   console.log(tdata)
 

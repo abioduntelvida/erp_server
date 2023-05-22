@@ -44,7 +44,17 @@ const CustomInput: React.ForwardRefExoticComponent<RefAttributes<any>> | any = f
   return <TextField fullWidth {...props} inputRef={ref} autoComplete='off' />
 })
 
-const defaultValues = {
+interface UserData {
+  title: string
+  assign: string[]
+  priority: string
+  incident: string
+  startDate: any
+  endDate: any
+  overview: string
+}
+
+const defaultValues: UserData = {
   title: '',
   assign: [],
   priority: '',
@@ -69,11 +79,8 @@ const FormLayoutsSeparator = () => {
 
   const token = auth.token
 
-  console.log(token)
-
   const onSubmit = (data: any) => {
     const url = '/ticket/helpdesk/create'
-
     const formData = {
       url: url,
       token: token,

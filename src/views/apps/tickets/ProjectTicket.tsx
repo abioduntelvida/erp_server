@@ -32,7 +32,7 @@ import { useAppDispatch, useAppSelector } from 'src/hooks/useTypedSelector'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
-import { fetchAsyncProjectTickets, getProjectTicketData } from 'src/store/apps/project-ticket'
+import { MyData, fetchAsyncProjectTickets, getProjectTicketData } from 'src/store/apps/project-ticket'
 
 // import { HTTP_STATUS } from 'src/constants'
 
@@ -109,7 +109,7 @@ const ProjectTicketTable = () => {
     token: token
   }
 
-  const tdata = ticketData?.data
+  const tdata = (ticketData as unknown as MyData)?.data
 
   console.log(tdata)
 

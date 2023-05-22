@@ -38,35 +38,35 @@ import { useDispatch } from 'react-redux'
 import { useAppSelector } from 'src/hooks/useTypedSelector'
 import { HTTP_STATUS } from 'src/constants'
 import { ThreeDots } from 'react-loading-icons'
-import { getProjectTicketLoading, postAsyncProjectTicket } from 'src/store/apps/project-ticket'
+import { MyData, getProjectTicketLoading, postAsyncProjectTicket } from 'src/store/apps/project-ticket'
 import { fetchAsyncProject } from 'src/store/apps/project'
 
 const CustomInput: React.ForwardRefExoticComponent<RefAttributes<any>> | any = forwardRef((props, ref) => {
   return <TextField fullWidth {...props} inputRef={ref} autoComplete='off' />
 })
 
-const defaultValues = {
+interface UserData {
+  title: string
+  email: string
+  project: string[]
+  assign: string
+  priority: string
+  incident: string
+  startDate: any
+  endDate: any
+  overview: string
+}
+
+const defaultValues: UserData = {
   title: '',
   email: '',
-  project: '',
+  project: [],
   assign: '',
   priority: '',
   incident: '',
   startDate: '',
   endDate: '',
   overview: ''
-}
-
-interface UserData {
-  title: string
-  email: string
-  project: string
-  assign: string
-  priority: string
-  incident: string
-  startDate: string
-  endDate: string
-  overview: string
 }
 
 interface Customer {
@@ -136,7 +136,8 @@ const FormLayoutsSeparator = () => {
       .unwrap()
       .then(originalPromiseResult => {
         console.log(originalPromiseResult)
-        setProjects(originalPromiseResult?.data?.data)
+        const resultData = (originalPromiseResult?.data as unknown as MyData).data
+        setProjects(resultData)
       })
       .catch(rejectedValueorSerializedError => {
         {

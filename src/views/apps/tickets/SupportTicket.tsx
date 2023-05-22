@@ -1,5 +1,6 @@
 // ** React Imports
 import { useState, useEffect, useCallback, FormEvent } from 'react'
+import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -26,6 +27,8 @@ import TableHeader from 'src/views/apps/permissions/TableHeader'
 // ** Actions Imports
 
 // ** Types
+import { MyData } from 'src/store/apps/project-ticket'
+
 // import { ThemeColor } from 'src/@core/layouts/types'
 import { SupportRowType } from 'src/types/apps/ticketTypes'
 import { useAppDispatch, useAppSelector } from 'src/hooks/useTypedSelector'
@@ -92,6 +95,7 @@ const SupportTicketTable = () => {
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
 
   // ** Hooks
+  const router = useRouter()
   const dispatch = useAppDispatch()
   const ticketData = useAppSelector(getTicketData)
 
@@ -109,7 +113,7 @@ const SupportTicketTable = () => {
     token: token
   }
 
-  const tdata = ticketData?.data
+  const tdata = (ticketData as unknown as MyData)?.data
 
   console.log(tdata)
 

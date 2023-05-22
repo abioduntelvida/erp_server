@@ -28,6 +28,7 @@ import TableHeader from 'src/views/apps/permissions/TableHeader'
 // ** Actions Imports
 
 // ** Types
+import { MyData } from 'src/store/apps/project-ticket'
 import { ThemeColor } from 'src/@core/layouts/types'
 import { TicketRowType } from 'src/types/apps/ticketTypes'
 import { useAppDispatch, useAppSelector } from 'src/hooks/useTypedSelector'
@@ -135,7 +136,8 @@ const HelpDeskTable = () => {
     token: token
   }
 
-  const tdata = ticketData?.data
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  const tdata = (ticketData as unknown as MyData)?.data
 
   console.log(tdata)
 
