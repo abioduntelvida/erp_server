@@ -1,5 +1,6 @@
 // ** React Imports
 import { useState, useEffect, useCallback, FormEvent } from 'react'
+import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -116,6 +117,7 @@ const HelpDeskTable = () => {
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
 
   // ** Hooks
+  const router = useRouter()
   const dispatch = useAppDispatch()
   const ticketData = useAppSelector(getTicketData)
 
@@ -150,6 +152,15 @@ const HelpDeskTable = () => {
   //   setEditValue(name)
   //   setEditDialogOpen(true)
   // }
+  const handleCellClick = (params: any) => {
+    // Access the row data from params.row
+    const rowData = params.row
+
+    console.log(rowData)
+
+    // Navigate to the desired page with the row data
+    router.push(`tickets/help-desk/${rowData._id}`)
+  }
 
   const handleDialogToggle = () => setEditDialogOpen(!editDialogOpen)
 
@@ -204,6 +215,7 @@ const HelpDeskTable = () => {
                 rows={tdata}
                 columns={columns}
                 disableRowSelectionOnClick
+                onCellClick={handleCellClick}
                 pageSizeOptions={[10, 25, 50]}
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}

@@ -10,9 +10,9 @@ import Typography from '@mui/material/Typography'
 
 // ** Custom Component Import
 import TabsWrapper from 'src/@core/styles/mui/TabsWrapper'
-import HelpDeskTable from 'src/views/apps/tickets/HelpDesk'
 import SupportTicketTable from 'src/views/apps/tickets/SupportTicket'
 import ProjectTicketTable from 'src/views/apps/tickets/ProjectTicket'
+import HelpDeskTable from 'src/views/apps/tickets/help-desk/HelpDesk'
 
 export const TickketTabsNav = () => {
   // ** State
