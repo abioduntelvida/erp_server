@@ -27,16 +27,17 @@ import { ThreeDots } from 'react-loading-icons'
 // import { DateType } from 'src/types/forms/reactDatepickerTypes'
 
 // ** Third Party Imports
-import { toast } from 'react-hot-toast'
+// import { toast } from 'react-hot-toast'
 import { useForm, Controller } from 'react-hook-form'
 
 // import { yupResolver } from '@hookform/resolvers/yup'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
-import { AppDispatch } from 'src/store'
-import { useDispatch } from 'react-redux'
-import { getHelpDeskLoading, postAsyncHelpDesk } from 'src/store/apps/help-desk'
+
+// import { AppDispatch } from 'src/store'
+// import { useDispatch } from 'react-redux'
+import { getHelpDeskLoading } from 'src/store/apps/help-desk'
 import { useAppSelector } from 'src/hooks/useTypedSelector'
 import { HTTP_STATUS } from 'src/constants'
 
@@ -56,14 +57,15 @@ const defaultValues = {
 
 const FormLayoutsSeparator = () => {
   // ** States
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit } = useForm({
     defaultValues,
     mode: 'onChange'
   })
 
   // ** Hooks
   const auth = useAuth()
-  const dispatch = useDispatch<AppDispatch>()
+
+  // const dispatch = useDispatch<AppDispatch>()
 
   const loading = useAppSelector(getHelpDeskLoading)
 
@@ -71,33 +73,29 @@ const FormLayoutsSeparator = () => {
 
   console.log(token)
 
-  const onSubmit = (data: any) => {
-    const url = '/ticket/helpdesk/create'
-
-    const formData = {
-      url: url,
-      token: token,
-      title: data.title,
-      assign_to: [...data.assign],
-      priority: data.priority,
-      incident_type: data.incident,
-      start_date: data.startDate,
-      end_date: data.endDate,
-      overview: data.overview
-    }
-
+  const onSubmit = () => {
+    // const url = '/ticket/helpdesk/create'
+    // const formData = {
+    //   url: url,
+    //   token: token,
+    //   title: data.title,
+    //   assign_to: [...data.assign],
+    //   priority: data.priority,
+    //   incident_type: data.incident,
+    //   start_date: data.startDate,
+    //   end_date: data.endDate,
+    //   overview: data.overview
+    // }
     // dispatch(postAsyncHelpDesk(formData))
     //   .unwrap()
     //   .then(originalPromiseResult => {
     //     console.log(originalPromiseResult)
     //     toast.success(originalPromiseResult.message)
-
     //     reset()
     //   })
     //   .catch(rejectedValueorSerializedError => {
     //     {
     //       rejectedValueorSerializedError && toast.error(rejectedValueorSerializedError.message)
-
     //       reset()
     //     }
     //   })

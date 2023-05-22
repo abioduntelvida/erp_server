@@ -2,9 +2,9 @@
 import mock from 'src/@fake-db/mock'
 
 // ** Types
-import { TicketRowType } from 'src/types/apps/ticketTypes'
+// import { TicketRowType } from 'src/types/apps/ticketTypes'
 
-const data: { tickets: TicketRowType[] } = {
+const data = {
   tickets: [
     {
       id: 1,

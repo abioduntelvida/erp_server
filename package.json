@@ -49,6 +49,7 @@
     "i18next-http-backend": "^2.2.0",
     "jsonwebtoken": "^8.5.1",
     "keen-slider": "^6.8.5",
+    "moment": "^2.29.4",
     "next": "13.2.4",
     "next-redux-wrapper": "^8.1.0",
     "nprogress": "^0.2.0",

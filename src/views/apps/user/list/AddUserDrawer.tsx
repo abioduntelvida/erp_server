@@ -20,9 +20,10 @@ import FormHelperText from '@mui/material/FormHelperText'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
 // ** Third Party Imports
-import * as yup from 'yup'
+// import * as yup from 'yup'
 import DatePicker from 'react-datepicker'
-import { yupResolver } from '@hookform/resolvers/yup'
+
+// import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
 import { ThreeDots } from 'react-loading-icons'
 
@@ -30,22 +31,24 @@ import { ThreeDots } from 'react-loading-icons'
 import Icon from 'src/@core/components/icon'
 
 // ** Store Imports
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 // ** Actions Imports
-import { addUser } from 'src/store/apps/users'
+// import { addUser } from 'src/store/apps/users'
 
 // ** Types Imports
-import { RootState, AppDispatch } from 'src/store'
-import { UsersType } from 'src/types/apps/userTypes'
+// import { RootState, AppDispatch } from 'src/store'
+// import { UsersType } from 'src/types/apps/userTypes'
 import { useAuth } from 'src/hooks/useAuth'
 import { getUserLoading, postAsyncUser } from 'src/store/apps/user'
 import { toast } from 'react-hot-toast'
-import { Grid } from '@mui/material'
+
+// import { Grid } from '@mui/material'
 
 // ** Hooks
 import { useAppSelector } from 'src/hooks/useTypedSelector'
 import { HTTP_STATUS } from 'src/constants'
+import { AppDispatch } from 'src/store'
 
 interface SidebarAddUserType {
   open: boolean
@@ -64,15 +67,15 @@ interface UserData {
   permission: string[]
 }
 
-const showErrors = (field: string, valueLen: number, min: number) => {
-  if (valueLen === 0) {
-    return `${field} field is required`
-  } else if (valueLen > 0 && valueLen < min) {
-    return `${field} must be at least ${min} characters`
-  } else {
-    return ''
-  }
-}
+// const showErrors = (field: string, valueLen: number, min: number) => {
+//   if (valueLen === 0) {
+//     return `${field} field is required`
+//   } else if (valueLen > 0 && valueLen < min) {
+//     return `${field} must be at least ${min} characters`
+//   } else {
+//     return ''
+//   }
+// }
 
 const Header = styled(Box)<BoxProps>(({ theme }) => ({
   display: 'flex',
@@ -193,7 +196,7 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
       .unwrap()
       .then(originalPromiseResult => {
         console.log(originalPromiseResult)
-        toast.success(originalPromiseResult.msg)
+        originalPromiseResult.message && toast.success('User Created Successfully')
 
         // reset()
       })

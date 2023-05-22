@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // ** React Imports
 import { useEffect, useCallback, useState, useMemo } from 'react'
 
@@ -10,6 +11,7 @@ import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { SelectChangeEvent } from '@mui/material/Select'
 
@@ -27,7 +29,7 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Actions Imports
-import { fetchData } from 'src/store/apps/user'
+// import { fetchData } from 'src/store/apps/user'
 
 // ** Types Imports
 import { RootState, AppDispatch } from 'src/store'

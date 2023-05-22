@@ -67,6 +67,7 @@ const AuthProvider = ({ children }: Props) => {
     }
 
     initAuth()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleLog = async (params: LoginParams, errorCallback?: ErrCallbackType) => {

@@ -21,6 +21,7 @@ import Select from '@mui/material/Select'
 // ** Types
 
 // ** Third Party Imports
+import moment from 'moment'
 import DatePicker from 'react-datepicker'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { toast } from 'react-hot-toast'
@@ -38,22 +39,11 @@ import { HTTP_STATUS } from 'src/constants'
 import { ThreeDots } from 'react-loading-icons'
 import { getProjectLoading, postAsyncProject } from 'src/store/apps/project'
 
-const defaultValues = {
-  name: '',
-  a_date: '',
-  s_date: '',
-  e_date: '',
-  summary: '',
-  demo: '',
-  site: '',
-  solution: ''
-}
-
 interface UserData {
   name: string
-  a_date: string
-  s_date: string
-  e_date: string
+  a_date: any
+  s_date: Date | string
+  e_date: string | Date
   summary: string
   demo: string
   site: string
@@ -65,6 +55,20 @@ const CustomInput: React.ForwardRefExoticComponent<RefAttributes<any>> | any = f
 })
 
 const FormLayoutsSeparator = () => {
+  const dateString = '2023-05-21'
+  const dateObject = moment(dateString).toDate()
+
+  const defaultValues = {
+    name: '',
+    a_date: '',
+    s_date: dateObject,
+    e_date: dateObject || '',
+    summary: '',
+    demo: '',
+    site: '',
+    solution: ''
+  }
+
   // ** States
   const { control, handleSubmit, reset } = useForm({
     defaultValues,

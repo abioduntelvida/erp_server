@@ -369,70 +369,65 @@ const RolesCards = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {
-                    // rolesArr.map((i: string, index: number) => {
-                    //   const id = i.toLowerCase().split(' ').join('-')
+                  {permissionsData.length > 0 &&
+                    permissionsData.map((permissions, index: number) => {
+                      const id = permissions?.permission.toLowerCase().split(' ').join('-')
 
-                    permissionsData.length > 0 &&
-                      permissionsData.map((permissions, index: number) => {
-                        const id = permissions?.permission.toLowerCase().split(' ').join('-')
-
-                        return (
-                          <>
-                            <TableRow key={index} sx={{ '& .MuiTableCell-root:first-of-type': { pl: '0 !important' } }}>
-                              <TableCell
-                                sx={{
-                                  fontWeight: 600,
-                                  whiteSpace: 'nowrap',
-                                  color: `${theme.palette.text.primary} !important`
-                                }}
-                              >
-                                {permissions?.permission}
-                              </TableCell>
-                              <TableCell>
-                                <FormControlLabel
-                                  label='Read'
-                                  sx={{ my: -1 }}
-                                  control={
-                                    <Checkbox
-                                      id={`${id}-read`}
-                                      onChange={() => togglePermission(`${id}-read`)}
-                                      checked={selectedCheckbox.includes(`${id}-read`)}
-                                    />
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <FormControlLabel
-                                  label='Write'
-                                  sx={{ my: -1 }}
-                                  control={
-                                    <Checkbox
-                                      id={`${id}-write`}
-                                      onChange={() => togglePermission(`${id}-write`)}
-                                      checked={selectedCheckbox.includes(`${id}-write`)}
-                                    />
-                                  }
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <FormControlLabel
-                                  label='Create'
-                                  sx={{ my: -1 }}
-                                  control={
-                                    <Checkbox
-                                      id={`${id}-create`}
-                                      onChange={() => togglePermission(`${id}-create`)}
-                                      checked={selectedCheckbox.includes(`${id}-create`)}
-                                    />
-                                  }
-                                />
-                              </TableCell>
-                            </TableRow>
-                          </>
-                        )
-                      })
-                  }
+                      return (
+                        <>
+                          <TableRow key={index} sx={{ '& .MuiTableCell-root:first-of-type': { pl: '0 !important' } }}>
+                            <TableCell
+                              sx={{
+                                fontWeight: 600,
+                                whiteSpace: 'nowrap',
+                                color: `${theme.palette.text.primary} !important`
+                              }}
+                            >
+                              {permissions?.permission}
+                            </TableCell>
+                            <TableCell>
+                              <FormControlLabel
+                                label='Read'
+                                sx={{ my: -1 }}
+                                control={
+                                  <Checkbox
+                                    id={`${id}-read`}
+                                    onChange={() => togglePermission(`${id}-read`)}
+                                    checked={selectedCheckbox.includes(`${id}-read`)}
+                                  />
+                                }
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <FormControlLabel
+                                label='Write'
+                                sx={{ my: -1 }}
+                                control={
+                                  <Checkbox
+                                    id={`${id}-write`}
+                                    onChange={() => togglePermission(`${id}-write`)}
+                                    checked={selectedCheckbox.includes(`${id}-write`)}
+                                  />
+                                }
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <FormControlLabel
+                                label='Create'
+                                sx={{ my: -1 }}
+                                control={
+                                  <Checkbox
+                                    id={`${id}-create`}
+                                    onChange={() => togglePermission(`${id}-create`)}
+                                    checked={selectedCheckbox.includes(`${id}-create`)}
+                                  />
+                                }
+                              />
+                            </TableCell>
+                          </TableRow>
+                        </>
+                      )
+                    })}
                 </TableBody>
               </Table>
             </TableContainer>
