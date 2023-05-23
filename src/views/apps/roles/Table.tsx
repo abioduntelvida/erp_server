@@ -223,6 +223,7 @@ const UserList = () => {
     url: url,
     token: token
   }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const userInfo = useMemo(() => userInfos, [])
 
   useEffect(() => {

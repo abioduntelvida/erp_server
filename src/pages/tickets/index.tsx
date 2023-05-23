@@ -15,7 +15,7 @@ const Tabs = () => {
     <Grid container>
       <Grid item xs={12} md={12}>
         <CardSnippet
-          title='Nav Tabs'
+          title=''
           sx={{ boxShadow: 0, backgroundColor: 'transparent', border: theme => `1px solid ${theme.palette.divider}` }}
           code={{
             tsx: source.TabsNavTSXCode,

@@ -77,9 +77,9 @@ const FormLayoutsSeparator = () => {
       title: data.title,
       support_staff: data.assignee,
       priority: data.priority,
-      client_name: data.name,
-      client_email: data.email,
-      client_number: data.phone
+      reporters_name: data.name,
+      reporters_email: data.email,
+      reporters_number: data.phone
     }
 
     dispatch(postAsyncSupportTicket(formData))

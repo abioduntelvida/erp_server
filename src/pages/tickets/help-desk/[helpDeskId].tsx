@@ -1,5 +1,6 @@
 // ** React Imports
-import React, { RefAttributes, forwardRef } from 'react'
+import React, { RefAttributes, forwardRef, useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Card from '@mui/material/Card'
@@ -27,6 +28,9 @@ import { ThreeDots } from 'react-loading-icons'
 // import { DateType } from 'src/types/forms/reactDatepickerTypes'
 
 // ** Third Party Imports
+import { useDispatch } from 'react-redux'
+import { toast } from 'react-hot-toast'
+
 // import { toast } from 'react-hot-toast'
 import { useForm, Controller } from 'react-hook-form'
 
@@ -40,6 +44,8 @@ import { useAuth } from 'src/hooks/useAuth'
 import { getHelpDeskLoading } from 'src/store/apps/help-desk'
 import { useAppSelector } from 'src/hooks/useTypedSelector'
 import { HTTP_STATUS } from 'src/constants'
+import { AppDispatch } from 'src/store'
+import { fetchAsyncTicketsDetails } from 'src/store/apps/tickets'
 
 const CustomInput: React.ForwardRefExoticComponent<RefAttributes<any>> | any = forwardRef((props, ref) => {
   return <TextField fullWidth {...props} inputRef={ref} autoComplete='off' />
@@ -67,6 +73,8 @@ const defaultValues: UserData = {
 
 const FormLayoutsSeparator = () => {
   // ** States
+  const [data, setData] = useState<any[]>([])
+
   const { control, handleSubmit } = useForm({
     defaultValues,
     mode: 'onChange'
@@ -74,14 +82,13 @@ const FormLayoutsSeparator = () => {
 
   // ** Hooks
   const auth = useAuth()
+  const router = useRouter()
+  const dispatch = useDispatch<AppDispatch>()
+  const params = router.query.helpDeskId
 
   // const dispatch = useDispatch<AppDispatch>()
-
   const loading = useAppSelector(getHelpDeskLoading)
-
   const token = auth.token
-
-  console.log(token)
 
   const onSubmit = () => {
     // const url = '/ticket/helpdesk/create'
@@ -110,6 +117,30 @@ const FormLayoutsSeparator = () => {
     //     }
     //   })
   }
+
+  const ticketInfo = {
+    url: `/ticket/helpdesk/${params}`,
+    token: token
+  }
+  useEffect(() => {
+    dispatch(fetchAsyncTicketsDetails(ticketInfo))
+      .unwrap()
+      .then(originalPromiseResult => {
+        // console.log(originalPromiseResult.status)
+        // originalPromiseResult.status === 200 &&
+
+        setData(originalPromiseResult.data)
+      })
+      .catch(rejectedValueorSerializedError => {
+        console.log(rejectedValueorSerializedError.message)
+        {
+          rejectedValueorSerializedError && toast.error(rejectedValueorSerializedError.message)
+        }
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  console.log(data)
 
   return (
     <Card>
