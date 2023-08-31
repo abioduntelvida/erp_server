@@ -81,13 +81,11 @@ const AuthProvider = ({ children }: Props) => {
         .then(async response => {
           console.log(response.data)
 
-          params.rememberMe
-            ? window.localStorage.setItem(authConfig.storageTokenKeyName, response?.data?.data.token)
-            : null
+          params.rememberMe ? window.localStorage.setItem(authConfig.storageTokenKeyName, response?.data?.token) : null
           const returnUrl = router.query.returnUrl
 
           setUser({ ...response?.data?.data?.user })
-          params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response?.data?.data?.user)) : null
+          params.rememberMe ? window.localStorage.setItem('userData', JSON.stringify(response?.data?.user)) : null
 
           const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
 

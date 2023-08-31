@@ -1,6 +1,6 @@
 export default {
   meEndpoint: '/auth/me',
-  loginEndpoint: 'https://new-telvida-erp.onrender.com/api/v1/user/signin',
+  loginEndpoint: 'https://f17a-102-88-35-202.ngrok-free.app/api/users/login',
   registerEndpoint: '/jwt/register',
   storageTokenKeyName: 'accessToken',
   storageDatekeyName: 'userData',
