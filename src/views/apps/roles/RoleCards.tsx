@@ -33,11 +33,20 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 
 // ** Third Party Imports
 import { useForm, Controller } from 'react-hook-form'
+import { toast } from 'react-hot-toast'
+
+// ** Store Imports
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from 'src/store'
 
 // ** Icon Imports
 import Icon from 'src/@core/components/icon'
 import { useAppSelector } from 'src/hooks/useTypedSelector'
 import { getPermissionsData } from 'src/store/apps/permissions'
+
+// ** Hooks
+import { useAuth } from 'src/hooks/useAuth'
+import { postAsyncRoles } from 'src/store/apps/roles'
 
 interface CardDataType {
   title: string
@@ -130,6 +139,9 @@ const RolesCards = () => {
 
   // ** Hook
   const theme = useTheme()
+  const dispatch = useDispatch<AppDispatch>()
+  const auth = useAuth()
+  const token = auth.token
 
   const handleClickOpen = () => setOpen(true)
 
@@ -150,6 +162,14 @@ const RolesCards = () => {
       setSelectedCheckbox([...arr])
     }
   }
+
+  const formattedData = selectedCheckbox.map(id => {
+    const [resource, action] = id.split('-')
+
+    return { resource, action }
+  })
+
+  console.log(formattedData)
 
   const handleSelectAllCheckbox = () => {
     if (isIndeterminateCheckbox) {
@@ -178,27 +198,29 @@ const RolesCards = () => {
     setSelectedCheckbox([])
     setIsIndeterminateCheckbox(false)
 
-    // const url = '/permission'
+    const url = '/access_controls'
 
-    // const formData = {
-    //   url: url,
-    //   token: token,
-    //   permission: data.name,
-    //   permission_description: data.description
-    // }
+    const formData = {
+      url: url,
+      token: token,
+      role_name: data.name,
+      permission: formattedData
+    }
 
-    // dispatch(postAsyncPermissions(formData))
-    //   .unwrap()
-    //   .then(originalPromiseResult => {
-    //     toast.success(originalPromiseResult.message)
-    //     setOpen(false)
-    //   })
-    //   .catch(rejectedValueorSerializedError => {
-    //     {
-    //       rejectedValueorSerializedError && toast.error(rejectedValueorSerializedError.message)
-    //       setOpen(false)
-    //     }
-    //   })
+    console.log(formData)
+
+    dispatch(postAsyncRoles(formData))
+      .unwrap()
+      .then(() => {
+        // toast.success(originalPromiseResult.message)
+        setOpen(false)
+      })
+      .catch(rejectedValueorSerializedError => {
+        {
+          rejectedValueorSerializedError && toast.error(rejectedValueorSerializedError.message)
+          setOpen(false)
+        }
+      })
   }
 
   console.log(selectedCheckbox)
@@ -324,9 +346,24 @@ const RolesCards = () => {
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
+                      sx={{ mb: 4 }}
                     />
                   )}
                 />
+
+                {/* <Controller
+                  name='description'
+                  control={control}
+                  render={({ field: { value, onChange, onBlur } }) => (
+                    <TextField
+                      label='Role Description'
+                      placeholder='Enter Role Description'
+                      value={value}
+                      onBlur={onBlur}
+                      onChange={onChange}
+                    />
+                  )}
+                /> */}
               </FormControl>
             </Box>
             <Typography variant='h6'>Role Permissions</Typography>
@@ -369,9 +406,11 @@ const RolesCards = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {permissionsData.length > 0 &&
-                    permissionsData.map((permissions, index: number) => {
-                      const id = permissions?.permission.toLowerCase().split(' ').join('-')
+                  {permissionsData &&
+                    permissionsData?.length > 0 &&
+                    permissionsData?.map((permissions, index: number) => {
+                      const id = permissions?.resource || 'none'.toLowerCase().split(' ').join('-') || 'none'
+                      console.log(permissions?.resource || 'none')
 
                       return (
                         <>
@@ -383,7 +422,7 @@ const RolesCards = () => {
                                 color: `${theme.palette.text.primary} !important`
                               }}
                             >
-                              {permissions?.permission}
+                              {permissions?.resource || 'none'}
                             </TableCell>
                             <TableCell>
                               <FormControlLabel

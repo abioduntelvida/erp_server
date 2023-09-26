@@ -5,12 +5,14 @@ import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Dialog from '@mui/material/Dialog'
 import Button from '@mui/material/Button'
-import Checkbox from '@mui/material/Checkbox'
+
+// import Checkbox from '@mui/material/Checkbox'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
-import FormControlLabel from '@mui/material/FormControlLabel'
+
+// import FormControlLabel from '@mui/material/FormControlLabel'
 
 // ** Third Party Imports
 import { useForm, Controller } from 'react-hook-form'
@@ -58,13 +60,14 @@ const TableHeader = (props: TableHeaderProps) => {
   })
 
   const onSubmit = (data: any) => {
-    const url = '/permission'
+    const url = '/resources'
 
     const formData = {
       url: url,
       token: token,
-      permission: data.name,
-      permission_description: data.description
+      resource: data.name
+
+      // permission_description: data.description
     }
 
     dispatch(postAsyncPermissions(formData))
@@ -73,7 +76,7 @@ const TableHeader = (props: TableHeaderProps) => {
         toast.success(originalPromiseResult.message)
         setOpen(false)
         const userInfo = {
-          url: '/permission/20/2',
+          url: '/resources',
           token: token
         }
         dispatch(fetchAsyncPermissions(userInfo))
@@ -164,9 +167,9 @@ const TableHeader = (props: TableHeaderProps) => {
                   />
                 )}
               />
-              <Box sx={{ width: '100%', display: 'flex' }}>
+              {/* <Box sx={{ width: '100%', display: 'flex' }}>
                 <FormControlLabel control={<Checkbox />} label='Set as core permission' />
-              </Box>
+              </Box> */}
               <Controller
                 name='description'
                 control={control}

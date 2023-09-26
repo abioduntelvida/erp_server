@@ -1,5 +1,5 @@
 // ** React Imports
-import React, { RefAttributes, forwardRef, useEffect, useState } from 'react'
+import React, { RefAttributes, forwardRef, useEffect } from 'react'
 
 // ** MUI Imports
 import Card from '@mui/material/Card'
@@ -38,8 +38,9 @@ import { useDispatch } from 'react-redux'
 import { useAppSelector } from 'src/hooks/useTypedSelector'
 import { HTTP_STATUS } from 'src/constants'
 import { ThreeDots } from 'react-loading-icons'
-import { MyData, getProjectTicketLoading, postAsyncProjectTicket } from 'src/store/apps/project-ticket'
-import { fetchAsyncProject } from 'src/store/apps/project'
+import { getProjectTicketLoading, postAsyncProjectTicket } from 'src/store/apps/project-ticket'
+import { fetchAsyncProject, getProjectData } from 'src/store/apps/project'
+import { getAllUsers } from 'src/store/apps/user'
 
 const CustomInput: React.ForwardRefExoticComponent<RefAttributes<any>> | any = forwardRef((props, ref) => {
   return <TextField fullWidth {...props} inputRef={ref} autoComplete='off' />
@@ -48,7 +49,7 @@ const CustomInput: React.ForwardRefExoticComponent<RefAttributes<any>> | any = f
 interface UserData {
   title: string
   email: string
-  project: string[]
+  project: string
   assign: string
   priority: string
   incident: string
@@ -60,7 +61,7 @@ interface UserData {
 const defaultValues: UserData = {
   title: '',
   email: '',
-  project: [],
+  project: '',
   assign: '',
   priority: '',
   incident: '',
@@ -69,15 +70,8 @@ const defaultValues: UserData = {
   overview: ''
 }
 
-interface Customer {
-  _id: string
-  customer_name: string
-}
-
 const FormLayoutsSeparator = () => {
   // ** States
-  const [projects, setProjects] = useState<Customer[]>([])
-
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
     mode: 'onChange'
@@ -88,24 +82,25 @@ const FormLayoutsSeparator = () => {
   const dispatch = useDispatch<AppDispatch>()
 
   const loading = useAppSelector(getProjectTicketLoading)
+  const fetchProjectData = useAppSelector(getProjectData)
+  const fetchAllUsers = useAppSelector(getAllUsers)
+
+  console.log(fetchProjectData)
 
   const token = auth.token
 
-  const userInfo = {
-    url: '/task/project/all',
-    token: token
-  }
   const onSubmit = (data: UserData) => {
-    const url = '/ticket/project/create'
+    const url = '/tickets'
 
     const formData = {
       url: url,
       token: token,
       title: data.title,
       incident_type: data.incident,
-      client_email: data.email,
-      project_cordinator: data.assign,
+      email_address: data.email,
+      assign_to: data.assign,
       start_date: data.startDate,
+      ticket_type: 'project',
       end_date: data.endDate,
       priority: data.priority,
       project: data.project,
@@ -132,22 +127,18 @@ const FormLayoutsSeparator = () => {
   }
 
   useEffect(() => {
+    const userInfo = {
+      url: '/projects/read',
+      token: token
+    }
+
     dispatch(fetchAsyncProject(userInfo))
       .unwrap()
       .then(originalPromiseResult => {
         console.log(originalPromiseResult)
-        const resultData = (originalPromiseResult?.data as unknown as MyData).data
-        setProjects(resultData)
-      })
-      .catch(rejectedValueorSerializedError => {
-        {
-          rejectedValueorSerializedError
-        }
       })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  console.log(projects)
 
   return (
     <Card>
@@ -193,9 +184,13 @@ const FormLayoutsSeparator = () => {
                       onChange={onChange}
                       value={value}
                     >
-                      <MenuItem value='3k2nf2mf0fni23'>Senetor</MenuItem>
-                      <MenuItem value='92jdf3j9f2mmg4'>Steve</MenuItem>
-                      <MenuItem value='93cn1d9j2239dj'>Abiodun</MenuItem>
+                      {fetchAllUsers &&
+                        fetchAllUsers.length > 0 &&
+                        fetchAllUsers?.map(user => (
+                          <MenuItem key={user.id} value={user.id}>
+                            {user.email}
+                          </MenuItem>
+                        ))}
                     </Select>
                   )}
                 />
@@ -307,11 +302,13 @@ const FormLayoutsSeparator = () => {
                       onChange={onChange}
                       value={value}
                     >
-                      {projects.map(project => (
-                        <MenuItem key={project._id} value={project._id}>
-                          {project.customer_name}
-                        </MenuItem>
-                      ))}
+                      {fetchProjectData &&
+                        fetchProjectData.length > 0 &&
+                        fetchProjectData?.map(project => (
+                          <MenuItem key={project.id} value={project.id}>
+                            {project.customer_name}
+                          </MenuItem>
+                        ))}
                     </Select>
                   )}
                 />

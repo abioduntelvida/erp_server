@@ -16,6 +16,7 @@ import rolesReducer from 'src/store/apps/roles'
 import userReducer from 'src/store/apps/user'
 import projectReducer from 'src/store/apps/project'
 import projectTicketReducer from 'src/store/apps/project-ticket'
+import tasksReducer from 'src/store/apps/tasks'
 
 const rootReducer = combineReducers({
   users: usersReducer,
@@ -31,7 +32,8 @@ const rootReducer = combineReducers({
   support: supportReducer,
   roles: rolesReducer,
   project: projectReducer,
-  projectTicket: projectTicketReducer
+  projectTicket: projectTicketReducer,
+  tasks: tasksReducer
 })
 
 export const store = configureStore({

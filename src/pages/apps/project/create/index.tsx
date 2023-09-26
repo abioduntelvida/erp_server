@@ -42,8 +42,6 @@ import { getProjectLoading, postAsyncProject } from 'src/store/apps/project'
 interface UserData {
   name: string
   a_date: any
-  s_date: any
-  e_date: any
   summary: string
   demo: string
   site: string
@@ -61,8 +59,6 @@ const FormLayoutsSeparator = () => {
   const defaultValues: UserData = {
     name: '',
     a_date: '',
-    s_date: '',
-    e_date: '',
     summary: '',
     demo: '',
     site: '',
@@ -84,19 +80,17 @@ const FormLayoutsSeparator = () => {
   const token = auth.token
 
   const onSubmit = (data: UserData) => {
-    const url = '/task/project/create'
+    const url = '/projects'
 
     const formData = {
       url: url,
       token: token,
       customer_name: data.name,
-      award_date: data.a_date,
-      start_date: data.s_date,
-      end_date: data.e_date,
+      po_award_date: data.a_date,
       order_summary: data.summary,
-      is_demo: data.demo,
-      is_site_survey: data.site,
-      is_solution_document: data.solution
+      isdemo: data.demo,
+      site_survey: data.site,
+      solution_document: data.solution
     }
 
     dispatch(postAsyncProject(formData))
@@ -146,48 +140,6 @@ const FormLayoutsSeparator = () => {
               </InputLabel>
               <Controller
                 name='a_date'
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <DatePicker
-                    selected={value}
-                    showYearDropdown
-                    showMonthDropdown
-                    placeholderText='MM-DD-YYYY'
-                    customInput={<CustomInput label='Pick Date' />}
-                    id='form-layouts-separator-date'
-                    onChange={onChange}
-                    value={value}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <InputLabel id='form-layouts-separator-select-label' sx={{ mb: 3 }}>
-                Start Date{' '}
-              </InputLabel>
-              <Controller
-                name='s_date'
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <DatePicker
-                    selected={value}
-                    showYearDropdown
-                    showMonthDropdown
-                    placeholderText='MM-DD-YYYY'
-                    customInput={<CustomInput label='Pick Date' />}
-                    id='form-layouts-separator-date'
-                    onChange={onChange}
-                    value={value}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <InputLabel id='form-layouts-separator-select-label' sx={{ mb: 3 }}>
-                End Date{' '}
-              </InputLabel>
-              <Controller
-                name='e_date'
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <DatePicker

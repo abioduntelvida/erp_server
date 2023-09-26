@@ -30,7 +30,7 @@ export const postAsyncHelpDesk = createAsyncThunk<
     const response = await axios.post(config.baseUrl + url, data, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `JWT ${token}`
       },
       validateStatus: () => {
         return true

@@ -17,6 +17,12 @@ export type UsersType = {
   avatarColor?: ThemeColor
 }
 
+export type RolesType = {
+  id: number
+  role_name: string
+  permission: string[]
+}
+
 export type ProjectListDataType = {
   id: number
   img: string

@@ -2,9 +2,10 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import axios from 'axios'
 import config from 'src/configs/config'
 import { HTTP_STATUS } from 'src/constants'
+import { RootState } from 'src/store'
 
 interface MyData {
-  data: any[]
+  docs: any[]
 }
 
 // SIGN UP
@@ -28,7 +29,7 @@ export const fetchAsyncRoles = createAsyncThunk<
     const response = await axios.get(config.baseUrl + url, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `JWT ${token}`
       },
       validateStatus: () => {
         return true
@@ -53,12 +54,12 @@ export const postAsyncRoles = createAsyncThunk<
     rejectValue: MyKnownError
   }
 >('roles/postAsyncThunk', async (userInfo, { rejectWithValue }) => {
-  const { url, token } = userInfo
+  const { url, token, ...data } = userInfo
   try {
-    const response = await axios.post(config.baseUrl + url, {
+    const response = await axios.post(config.baseUrl + url, data, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `JWT ${token}`
       },
       validateStatus: () => {
         return true
@@ -77,13 +78,13 @@ export const postAsyncRoles = createAsyncThunk<
 })
 
 export interface IRoles {
-  data: any[] | null
+  data: readonly any[]
   loading: string
   error: null | string
 }
 
 const initialState = {
-  data: null,
+  data: [],
   loading: 'IDLE',
   error: ''
 } as IRoles
@@ -97,9 +98,8 @@ const RolesSlice = createSlice({
       // The type signature on action.payload matches what we passed into the generic for `normalize`, allowing us to access specific properties on `payload.articles` if desired
       state.loading = HTTP_STATUS.PENDING
     })
-    builder.addCase(postAsyncRoles.fulfilled, (state, { payload }) => {
+    builder.addCase(postAsyncRoles.fulfilled, state => {
       state.loading = HTTP_STATUS.FULFILLED
-      state.data = payload.data
     })
     builder.addCase(postAsyncRoles.rejected, (state, action: PayloadAction<any>) => {
       if (action.payload) {
@@ -108,14 +108,15 @@ const RolesSlice = createSlice({
       } else {
         // state.error = action.error
       }
-    }),
-      builder.addCase(fetchAsyncRoles.pending, state => {
-        // The type signature on action.payload matches what we passed into the generic for `normalize`, allowing us to access specific properties on `payload.articles` if desired
-        state.loading = HTTP_STATUS.PENDING
-      })
+      state.loading = HTTP_STATUS.REJECTED
+    })
+    builder.addCase(fetchAsyncRoles.pending, state => {
+      // The type signature on action.payload matches what we passed into the generic for `normalize`, allowing us to access specific properties on `payload.articles` if desired
+      state.loading = HTTP_STATUS.PENDING
+    })
     builder.addCase(fetchAsyncRoles.fulfilled, (state, { payload }) => {
       state.loading = HTTP_STATUS.FULFILLED
-      state.data = payload.data
+      state.data = payload.docs
     })
     builder.addCase(fetchAsyncRoles.rejected, (state, action: PayloadAction<any>) => {
       if (action.payload) {
@@ -124,10 +125,11 @@ const RolesSlice = createSlice({
       } else {
         // state.error = action.error
       }
+      state.loading = HTTP_STATUS.REJECTED
     })
   }
 })
 
 // export const getBomLoading = (state) => state.bom?.loading;
-// export const getBomData = (state) => state?.bom?.data?.data;
+export const getRolesData = (state: RootState) => state.roles?.data
 export default RolesSlice.reducer

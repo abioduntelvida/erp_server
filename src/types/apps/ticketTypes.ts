@@ -21,7 +21,8 @@ export type ProjectRowType = {
   customer_name: string
   start_date: string
   end_date: string
-  deadline: string
+  po_award_date: string
+  site_survey: string
   status: string
 }
 

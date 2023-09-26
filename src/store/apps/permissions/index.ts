@@ -6,7 +6,7 @@ import { RootState } from 'src/store'
 
 interface MyData {
   message: string
-  data: any[]
+  docs: any[]
 }
 
 // SIGN UP
@@ -31,7 +31,7 @@ export const fetchAsyncPermissions = createAsyncThunk<
     const response = await axios.get(config.baseUrl + url, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `JWT ${token}`
       },
       validateStatus: () => {
         return true
@@ -61,7 +61,7 @@ export const postAsyncPermissions = createAsyncThunk<
     const response = await axios.post(config.baseUrl + url, data, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `JWT ${token}`
       },
       validateStatus: () => {
         return true
@@ -90,7 +90,7 @@ export const deleteAsyncPermission = createAsyncThunk<
     const response = await axios.delete(config.baseUrl + url + id, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `JWT ${token}`
       }
     })
 
@@ -127,7 +127,7 @@ const PermissionsSlice = createSlice({
     })
     builder.addCase(fetchAsyncPermissions.fulfilled, (state, { payload }) => {
       state.loading = HTTP_STATUS.FULFILLED
-      state.data = payload.data
+      state.data = payload.docs
     })
     builder.addCase(fetchAsyncPermissions.rejected, (state, action: PayloadAction<any>) => {
       if (action.payload) {
@@ -136,11 +136,12 @@ const PermissionsSlice = createSlice({
       } else {
         // state.error = action.error
       }
-    }),
-      builder.addCase(postAsyncPermissions.pending, state => {
-        // The type signature on action.payload matches what we passed into the generic for `normalize`, allowing us to access specific properties on `payload.articles` if desired
-        state.loading = HTTP_STATUS.PENDING
-      })
+      state.loading = HTTP_STATUS.REJECTED
+    })
+    builder.addCase(postAsyncPermissions.pending, state => {
+      // The type signature on action.payload matches what we passed into the generic for `normalize`, allowing us to access specific properties on `payload.articles` if desired
+      state.loading = HTTP_STATUS.PENDING
+    })
     builder.addCase(postAsyncPermissions.fulfilled, state => {
       state.loading = HTTP_STATUS.FULFILLED
     })
@@ -151,11 +152,12 @@ const PermissionsSlice = createSlice({
       } else {
         // state.error = action.error
       }
-    }),
-      builder.addCase(deleteAsyncPermission.pending, state => {
-        // The type signature on action.payload matches what we passed into the generic for `normalize`, allowing us to access specific properties on `payload.articles` if desired
-        state.loading = HTTP_STATUS.PENDING
-      })
+      state.loading = HTTP_STATUS.REJECTED
+    })
+    builder.addCase(deleteAsyncPermission.pending, state => {
+      // The type signature on action.payload matches what we passed into the generic for `normalize`, allowing us to access specific properties on `payload.articles` if desired
+      state.loading = HTTP_STATUS.PENDING
+    })
     builder.addCase(deleteAsyncPermission.fulfilled, state => {
       state.loading = HTTP_STATUS.FULFILLED
     })
@@ -166,6 +168,7 @@ const PermissionsSlice = createSlice({
       } else {
         // state.error = action.error
       }
+      state.loading = HTTP_STATUS.REJECTED
     })
   }
 })

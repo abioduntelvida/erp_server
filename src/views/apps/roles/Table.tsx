@@ -33,13 +33,13 @@ import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Types Imports
 import { RootState, AppDispatch } from 'src/store'
-import { UsersType } from 'src/types/apps/userTypes'
+import { RolesType } from 'src/types/apps/userTypes'
 import { ThemeColor } from 'src/@core/layouts/types'
 
 // ** Custom Components Imports
 import TableHeader from 'src/views/apps/roles/TableHeader'
 import { useAuth } from 'src/hooks/useAuth'
-import { fetchAsyncRoles } from 'src/store/apps/roles'
+import { fetchAsyncRoles, getRolesData } from 'src/store/apps/roles'
 
 interface UserRoleType {
   [key: string]: { icon: string; color: ThemeColor }
@@ -50,7 +50,11 @@ interface UserRowColorType {
 }
 
 interface CellType {
-  row: UsersType
+  row: RolesType
+}
+
+interface Colors {
+  [key: string]: ThemeColor
 }
 
 // ** Vars
@@ -69,107 +73,62 @@ const userStatusObj: UserRowColorType = {
 }
 
 // ** renders client column
-const renderClient = (row: UsersType) => {
-  if (row.avatar.length) {
-    return <CustomAvatar src={row.avatar} sx={{ mr: 4, width: 30, height: 30 }} />
-  } else {
-    return (
-      <CustomAvatar skin='light' color={row.avatarColor} sx={{ mr: 4, width: 30, height: 30, fontSize: '0.875rem' }}>
-        {getInitials(row.fullName ? row.fullName : 'John Doe')}
-      </CustomAvatar>
-    )
-  }
+// const renderClient = (row: UsersType) => {
+//   if (row.avatar.length) {
+//     return <CustomAvatar src={row.avatar} sx={{ mr: 4, width: 30, height: 30 }} />
+//   } else {
+//     return (
+//       <CustomAvatar skin='light' color={row.avatarColor} sx={{ mr: 4, width: 30, height: 30, fontSize: '0.875rem' }}>
+//         {getInitials(row.fullName ? row.fullName : 'John Doe')}
+//       </CustomAvatar>
+//     )
+//   }
+// }
+
+const colors: Colors = {
+  read: 'info',
+  create: 'success',
+  write: 'primary'
 }
 
 const columns: GridColDef[] = [
   {
-    flex: 0.2,
-    minWidth: 230,
-    field: 'fullName',
-    headerName: 'User',
-    renderCell: ({ row }: CellType) => {
-      const { fullName, username } = row
-
-      return (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {renderClient(row)}
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-            <Typography
-              noWrap
-              component={Link}
-              href='/apps/user/view/account/'
-              sx={{
-                fontWeight: 600,
-                color: 'text.secondary',
-                textDecoration: 'none',
-                '&:hover': { color: 'primary.main' }
-              }}
-            >
-              {fullName}
-            </Typography>
-            <Typography noWrap variant='body2' sx={{ color: 'text.disabled' }}>
-              {`@${username}`}
-            </Typography>
-          </Box>
-        </Box>
-      )
-    }
+    flex: 0.25,
+    field: 'id',
+    minWidth: 240,
+    headerName: 'Role ID',
+    renderCell: ({ row }: CellType) => <Typography sx={{ color: 'text.secondary' }}>{row.id}</Typography>
   },
   {
     flex: 0.2,
     minWidth: 250,
-    field: 'email',
-    headerName: 'Email',
+    field: 'role_name',
+    headerName: 'Role Name',
     renderCell: ({ row }: CellType) => {
       return (
         <Typography noWrap sx={{ color: 'text.secondary' }}>
-          {row.email}
+          {row.role_name}
         </Typography>
       )
     }
   },
   {
-    flex: 0.15,
-    field: 'role',
-    minWidth: 150,
-    headerName: 'Role',
+    flex: 0.35,
+    minWidth: 280,
+    field: 'assignedTo',
+    headerName: 'Controls',
     renderCell: ({ row }: CellType) => {
-      return (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <CustomAvatar
-            skin='light'
-            color={userRoleObj[row.role].color || 'primary'}
-            sx={{ mr: 2, width: 30, height: 30, '& svg': { fontSize: '1rem' } }}
-          >
-            <Icon fontSize={20} icon={userRoleObj[row.role].icon} />
-          </CustomAvatar>
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.role}
-          </Typography>
-        </Box>
-      )
-    }
-  },
-  {
-    flex: 0.15,
-    minWidth: 120,
-    headerName: 'Plan',
-    field: 'currentPlan',
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap sx={{ fontWeight: 600, color: 'text.secondary', textTransform: 'capitalize' }}>
-          {row.currentPlan}
-        </Typography>
-      )
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 110,
-    field: 'status',
-    headerName: 'Status',
-    renderCell: ({ row }: CellType) => {
-      return <CustomChip rounded skin='light' size='small' label={row.status} color={userStatusObj[row.status]} />
+      return row.permission.map((access: string, index: number) => (
+        <CustomChip
+          rounded
+          size='small'
+          key={index}
+          skin='light'
+          color={colors[access.action]}
+          label={access?.action?.replace('-', ' ')}
+          sx={{ '&:not(:last-of-type)': { mr: 2 } }}
+        />
+      ))
     }
   },
   {
@@ -179,8 +138,8 @@ const columns: GridColDef[] = [
     field: 'actions',
     headerName: 'Actions',
     renderCell: () => (
-      <IconButton component={Link} href='/apps/user/view/account/'>
-        <Icon icon='bx:show-alt' />
+      <IconButton>
+        <Icon fontSize={20} icon='bx:trash' />
       </IconButton>
     )
   }
@@ -196,7 +155,9 @@ const UserList = () => {
   const dispatch = useDispatch<AppDispatch>()
   const auth = useAuth()
   const token = auth.token
-  const store = useSelector((state: RootState) => state.user)
+  const fetchRolesData = useSelector(getRolesData)
+
+  console.log(fetchRolesData)
 
   // useEffect(() => {
   //   dispatch(
@@ -217,7 +178,7 @@ const UserList = () => {
     setPlan(e.target.value)
   }, [])
 
-  const url = '/role/10/0'
+  const url = '/access_controls'
 
   const userInfos = {
     url: url,
@@ -239,15 +200,15 @@ const UserList = () => {
       <Grid item xs={12}>
         <Card>
           <TableHeader plan={plan} value={value} handleFilter={handleFilter} handlePlanChange={handlePlanChange} />
-          {/* <DataGrid
+          <DataGrid
             autoHeight
-            rows={store.data}
+            rows={fetchRolesData}
             columns={columns}
             disableRowSelectionOnClick
             pageSizeOptions={[10, 25, 50]}
             paginationModel={paginationModel}
             onPaginationModelChange={setPaginationModel}
-          /> */}
+          />
         </Card>
       </Grid>
     </Grid>

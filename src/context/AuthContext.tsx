@@ -74,10 +74,14 @@ const AuthProvider = ({ children }: Props) => {
     try {
       setLoading(true)
       await axios
-        .post(authConfig.loginEndpoint, {
-          email: params.email,
-          password: params.password
-        })
+        .post(
+          authConfig.loginEndpoint,
+          {
+            email: params.email,
+            password: params.password
+          },
+          { withCredentials: true }
+        )
         .then(async response => {
           console.log(response.data)
 

@@ -14,8 +14,6 @@ import CardContent from '@mui/material/CardContent'
 import CardActions from '@mui/material/CardActions'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
-import Box from '@mui/material/Box'
-import Chip from '@mui/material/Chip'
 
 // ** Styled Component
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
@@ -30,6 +28,7 @@ import { useAuth } from 'src/hooks/useAuth'
 import { getSupportLoading, postAsyncSupportTicket } from 'src/store/apps/support-ticket'
 import { HTTP_STATUS } from 'src/constants'
 import { ThreeDots } from 'react-loading-icons'
+import { getAllUsers } from 'src/store/apps/user'
 
 const defaultValues = {
   title: '',
@@ -39,19 +38,6 @@ const defaultValues = {
   assignee: [],
   priority: '',
   overview: ''
-}
-
-const names = ['Senetor', 'Chidozie', 'Olamide', 'Steve', 'Abiodun', 'Ayo', 'Zaniab']
-
-const ITEM_HEIGHT = 48
-const ITEM_PADDING_TOP = 8
-const MenuProps = {
-  PaperProps: {
-    style: {
-      width: 250,
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP
-    }
-  }
 }
 
 const FormLayoutsSeparator = () => {
@@ -66,16 +52,19 @@ const FormLayoutsSeparator = () => {
 
   // ** Token
   const token = auth.token
+
   const loading = useAppSelector(getSupportLoading)
+  const fetchAllUsers = useAppSelector(getAllUsers)
 
   const onSubmit = (data: any) => {
-    const url = '/ticket/support/create'
+    const url = '/tickets'
 
     const formData = {
       url: url,
       token: token,
       title: data.title,
-      support_staff: data.assignee,
+      assign_to: data.assignee,
+      ticket_type: 'support',
       priority: data.priority,
       reporters_name: data.name,
       reporters_email: data.email,
@@ -170,26 +159,20 @@ const FormLayoutsSeparator = () => {
                   control={control}
                   render={({ field: { value, onChange } }) => (
                     <Select
-                      multiple
-                      label='Chip'
-                      value={value}
-                      MenuProps={MenuProps}
-                      id='demo-multiple-chip'
+                      label='Who'
+                      placeholder='Select'
+                      id='form-layouts-separator-select'
+                      labelId='form-layouts-separator-select-label'
                       onChange={onChange}
-                      labelId='demo-multiple-chip-label'
-                      renderValue={selected => (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                          {(selected as unknown as string[]).map(value => (
-                            <Chip key={value} label={value} sx={{ m: 0.75 }} />
-                          ))}
-                        </Box>
-                      )}
+                      value={value}
                     >
-                      {names.map(name => (
-                        <MenuItem key={name} value={name}>
-                          {name}
-                        </MenuItem>
-                      ))}
+                      {fetchAllUsers &&
+                        fetchAllUsers.length > 0 &&
+                        fetchAllUsers?.map(user => (
+                          <MenuItem key={user.id} value={user.id}>
+                            {user.email}
+                          </MenuItem>
+                        ))}
                     </Select>
                   )}
                 />

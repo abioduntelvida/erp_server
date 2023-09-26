@@ -28,16 +28,16 @@ import TableHeader from 'src/views/apps/permissions/TableHeader'
 // ** Actions Imports
 
 // ** Types
-import { MyData } from 'src/store/apps/project-ticket'
 import { ThemeColor } from 'src/@core/layouts/types'
 import { TicketRowType } from 'src/types/apps/ticketTypes'
 import { useAppDispatch, useAppSelector } from 'src/hooks/useTypedSelector'
-import { fetchAsyncTickets, getTicketData } from 'src/store/apps/tickets'
+import { fetchAsyncTickets, getTicketData, getTicketLoading } from 'src/store/apps/tickets'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
 
-// import { HTTP_STATUS } from 'src/constants'
+// ** Constants
+import { HTTP_STATUS } from 'src/constants'
 
 interface Colors {
   [key: string]: ThemeColor
@@ -58,10 +58,10 @@ const colors: Colors = {
 const defaultColumns: GridColDef[] = [
   {
     flex: 0.45,
-    field: 'ticket',
+    field: 'id',
     minWidth: 140,
     headerName: 'Ticket No.',
-    renderCell: ({ row }: CellType) => <Typography sx={{ color: 'text.secondary' }}>{row.ticket_no}</Typography>
+    renderCell: ({ row }: CellType) => <Typography sx={{ color: 'text.secondary' }}>{row.id}</Typography>
   },
   {
     flex: 0.25,
@@ -121,28 +121,22 @@ const HelpDeskTable = () => {
   const router = useRouter()
   const dispatch = useAppDispatch()
   const ticketData = useAppSelector(getTicketData)
+  const loadingTickets = useAppSelector(getTicketLoading)
 
   // const isLoading = useAppSelector(getTicketLoading)
-
   const auth = useAuth()
 
   // ** Token
   const token = auth.token
 
-  // const store = useSelector((state: RootState) => state.permissions)
-
-  const userInfo = {
-    url: '/ticket/helpdesk/all',
+  const formData = {
+    url: '/tickets/me',
     token: token
   }
 
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  const tdata = (ticketData as unknown as MyData)?.data
-
-  console.log(tdata)
-
   useEffect(() => {
-    dispatch(fetchAsyncTickets(userInfo))
+    console.log(formData)
+    dispatch(fetchAsyncTickets(formData))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -161,7 +155,7 @@ const HelpDeskTable = () => {
     console.log(rowData)
 
     // Navigate to the desired page with the row data
-    router.push(`tickets/help-desk/${rowData._id}`)
+    router.push(`apps/tasks/open-task/${rowData.id}`)
   }
 
   const handleDialogToggle = () => setEditDialogOpen(!editDialogOpen)
@@ -203,29 +197,33 @@ const HelpDeskTable = () => {
           />
         </Grid>
         <Grid item xs={12}>
-          {tdata === undefined ? (
-            <Box sx={{ mt: 6, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-              <CircularProgress sx={{ mb: 4 }} />
-              <Typography>Loading...</Typography>
+          {loadingTickets === HTTP_STATUS.PENDING ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+              <CircularProgress />
             </Box>
           ) : (
             <Card>
               <TableHeader value={value} handleFilter={handleFilter} />
-              <DataGrid
-                autoHeight
-                getRowId={row => row._id}
-                rows={tdata}
-                columns={columns}
-                disableRowSelectionOnClick
-                onCellClick={handleCellClick}
-                pageSizeOptions={[10, 25, 50]}
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-              />
+              {ticketData && ticketData.length > 0 ? (
+                <DataGrid
+                  autoHeight
+                  getRowId={row => row.id}
+                  rows={ticketData}
+                  columns={columns}
+                  onCellClick={handleCellClick}
+                  disableRowSelectionOnClick
+                  pageSizeOptions={[10, 25, 50]}
+                  paginationModel={paginationModel}
+                  onPaginationModelChange={setPaginationModel}
+                />
+              ) : (
+                <Typography sx={{ mb: 3, fontSize: '1.375rem', fontWeight: 700 }}>No Ticket Available</Typography>
+              )}
             </Card>
           )}
         </Grid>
       </Grid>
+
       <Dialog
         maxWidth='sm'
         fullWidth

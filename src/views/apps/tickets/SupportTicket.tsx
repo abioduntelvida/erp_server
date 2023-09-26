@@ -21,47 +21,47 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import CircularProgress from '@mui/material/CircularProgress'
 
 // ** Custom Components Imports
+import CustomChip from 'src/@core/components/mui/chip'
 import PageHeader from 'src/@core/components/page-header'
 import TableHeader from 'src/views/apps/permissions/TableHeader'
 
 // ** Actions Imports
 
 // ** Types
-import { MyData } from 'src/store/apps/project-ticket'
-
-// import { ThemeColor } from 'src/@core/layouts/types'
-import { SupportRowType } from 'src/types/apps/ticketTypes'
+import { ThemeColor } from 'src/@core/layouts/types'
+import { TicketRowType } from 'src/types/apps/ticketTypes'
 import { useAppDispatch, useAppSelector } from 'src/hooks/useTypedSelector'
-import { fetchAsyncTickets, getTicketData } from 'src/store/apps/tickets'
+import { fetchAsyncAssignedTickets, getAssignedTicketData, getTicketLoading } from 'src/store/apps/tickets'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
 
-// import { HTTP_STATUS } from 'src/constants'
+// ** Constants
+import { HTTP_STATUS } from 'src/constants'
 
-// interface Colors {
-//   [key: string]: ThemeColor
-// }
-
-interface CellType {
-  row: SupportRowType
+interface Colors {
+  [key: string]: ThemeColor
 }
 
-// const colors: Colors = {
-//   support: 'info',
-//   users: 'success',
-//   ongoing: 'warning',
-//   administrator: 'primary',
-//   'restricted-user': 'error'
-// }
+interface CellType {
+  row: TicketRowType
+}
+
+const colors: Colors = {
+  support: 'info',
+  users: 'success',
+  ongoing: 'warning',
+  administrator: 'primary',
+  'restricted-user': 'error'
+}
 
 const defaultColumns: GridColDef[] = [
   {
     flex: 0.45,
-    field: 'ticket',
+    field: 'id',
     minWidth: 140,
     headerName: 'Ticket No.',
-    renderCell: ({ row }: CellType) => <Typography sx={{ color: 'text.secondary' }}>{row.ticket_no}</Typography>
+    renderCell: ({ row }: CellType) => <Typography sx={{ color: 'text.secondary' }}>{row.id}</Typography>
   },
   {
     flex: 0.25,
@@ -73,9 +73,18 @@ const defaultColumns: GridColDef[] = [
   {
     flex: 0.35,
     minWidth: 130,
-    field: 'client_email',
-    headerName: 'Client Email',
-    renderCell: ({ row }: CellType) => <Typography sx={{ color: 'text.secondary' }}>{row.client_email}</Typography>
+    field: 'status',
+    headerName: 'Status',
+    renderCell: ({ row }: CellType) => (
+      <CustomChip
+        rounded
+        size='small'
+        skin='light'
+        color={colors[row.status]}
+        label={row.status}
+        sx={{ '&:not(:last-of-type)': { mr: 2 } }}
+      />
+    )
   },
   {
     flex: 0.25,
@@ -83,6 +92,20 @@ const defaultColumns: GridColDef[] = [
     minWidth: 100,
     headerName: 'Priority',
     renderCell: ({ row }: CellType) => <Typography sx={{ color: 'text.secondary' }}>{row.priority}</Typography>
+  },
+  {
+    flex: 0.25,
+    minWidth: 100,
+    field: 'startDate',
+    headerName: 'Start Date',
+    renderCell: ({ row }: CellType) => <Typography sx={{ color: 'text.secondary' }}>{row.start_date}</Typography>
+  },
+  {
+    flex: 0.25,
+    minWidth: 100,
+    field: 'createdDate',
+    headerName: 'End Date',
+    renderCell: ({ row }: CellType) => <Typography sx={{ color: 'text.secondary' }}>{row.end_date}</Typography>
   }
 ]
 
@@ -97,28 +120,23 @@ const SupportTicketTable = () => {
   // ** Hooks
   const router = useRouter()
   const dispatch = useAppDispatch()
-  const ticketData = useAppSelector(getTicketData)
+  const ticketData = useAppSelector(getAssignedTicketData)
+  const loadingTickets = useAppSelector(getTicketLoading)
+  console.log(ticketData)
 
   // const isLoading = useAppSelector(getTicketLoading)
-
   const auth = useAuth()
 
   // ** Token
   const token = auth.token
 
-  // const store = useSelector((state: RootState) => state.permissions)
-
-  const userInfo = {
-    url: '/ticket/support/all',
+  const formData = {
+    url: '/tickets/assigned',
     token: token
   }
 
-  const tdata = (ticketData as unknown as MyData)?.data
-
-  console.log(tdata)
-
   useEffect(() => {
-    dispatch(fetchAsyncTickets(userInfo))
+    dispatch(fetchAsyncAssignedTickets(formData))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -130,7 +148,6 @@ const SupportTicketTable = () => {
   //   setEditValue(name)
   //   setEditDialogOpen(true)
   // }
-
   const handleCellClick = (params: any) => {
     // Access the row data from params.row
     const rowData = params.row
@@ -180,29 +197,33 @@ const SupportTicketTable = () => {
           />
         </Grid>
         <Grid item xs={12}>
-          {tdata === undefined ? (
-            <Box sx={{ mt: 6, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-              <CircularProgress sx={{ mb: 4 }} />
-              <Typography>Loading...</Typography>
+          {loadingTickets === HTTP_STATUS.PENDING ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+              <CircularProgress />
             </Box>
           ) : (
             <Card>
               <TableHeader value={value} handleFilter={handleFilter} />
-              <DataGrid
-                autoHeight
-                getRowId={row => row._id}
-                rows={tdata}
-                columns={columns}
-                disableRowSelectionOnClick
-                onCellClick={handleCellClick}
-                pageSizeOptions={[10, 25, 50]}
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-              />
+              {ticketData && ticketData.length > 0 ? (
+                <DataGrid
+                  autoHeight
+                  getRowId={row => row.id}
+                  rows={ticketData}
+                  columns={columns}
+                  onCellClick={handleCellClick}
+                  disableRowSelectionOnClick
+                  pageSizeOptions={[10, 25, 50]}
+                  paginationModel={paginationModel}
+                  onPaginationModelChange={setPaginationModel}
+                />
+              ) : (
+                <Typography sx={{ mb: 3, fontSize: '1.375rem', fontWeight: 700 }}>No Ticket Available</Typography>
+              )}
             </Card>
           )}
         </Grid>
       </Grid>
+
       <Dialog
         maxWidth='sm'
         fullWidth

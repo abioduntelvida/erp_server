@@ -30,7 +30,7 @@ export const fetchAsyncProjectTickets = createAsyncThunk<
     const response = await axios.get(config.baseUrl + url, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `JWT ${token}`
       },
       validateStatus: () => {
         return true
@@ -57,7 +57,7 @@ export const postAsyncProjectTicket = createAsyncThunk<
     const response = await axios.post(config.baseUrl + url, data, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `JWT ${token}`
       },
       validateStatus: () => {
         return true
@@ -99,6 +99,7 @@ const ProjectTicketSlice = createSlice({
     })
     builder.addCase(fetchAsyncProjectTickets.fulfilled, (state, { payload }) => {
       state.loading = HTTP_STATUS.FULFILLED
+      console.log(payload)
       state.data = payload.data
     })
     builder.addCase(fetchAsyncProjectTickets.rejected, (state, action: PayloadAction<any>) => {
@@ -125,6 +126,7 @@ const ProjectTicketSlice = createSlice({
       } else {
         // state.error = action.error
       }
+      state.loading = HTTP_STATUS.REJECTED
     })
   }
 })

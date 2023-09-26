@@ -5,7 +5,7 @@ import { HTTP_STATUS } from 'src/constants'
 import { RootState } from 'src/store'
 
 interface MyData {
-  data: any[]
+  docs: any[]
   message: string
 }
 
@@ -24,13 +24,13 @@ export const fetchAsyncProject = createAsyncThunk<
   {
     rejectValue: MyKnownError
   }
->('projectTickets/fetchAsyncThunk', async (userInfo, { rejectWithValue }) => {
-  const { url, token } = userInfo
+>('project/fetchAsyncThunk', async (formData, { rejectWithValue }) => {
+  const { url, token } = formData
   try {
     const response = await axios.get(config.baseUrl + url, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `JWT ${token}`
       },
       validateStatus: () => {
         return true
@@ -57,7 +57,69 @@ export const postAsyncProject = createAsyncThunk<
     const response = await axios.post(config.baseUrl + url, data, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `JWT ${token}`
+      },
+      validateStatus: () => {
+        return true
+      }
+    })
+
+    return response.data
+  } catch (err: any) {
+    console.log(err)
+
+    if (!err.response) {
+      throw err
+    }
+
+    return rejectWithValue(err.response.data)
+  }
+})
+
+export const updateAsyncProject = createAsyncThunk<
+  MyData,
+  { url: string } & Partial<UserAttributes>,
+  {
+    rejectValue: MyKnownError
+  }
+>('projectTicket/updateAsyncThunk', async (formData, { rejectWithValue }) => {
+  const { url, token, ...data } = formData
+  try {
+    const response = await axios.patch(config.baseUrl + url, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `JWT ${token}`
+      },
+      validateStatus: () => {
+        return true
+      }
+    })
+
+    return response.data
+  } catch (err: any) {
+    console.log(err)
+
+    if (!err.response) {
+      throw err
+    }
+
+    return rejectWithValue(err.response.data)
+  }
+})
+
+export const deleteAsyncProject = createAsyncThunk<
+  MyData,
+  { url: string } & Partial<UserAttributes>,
+  {
+    rejectValue: MyKnownError
+  }
+>('projectTicket/deleteAsyncThunk', async (formData, { rejectWithValue }) => {
+  const { url, token } = formData
+  try {
+    const response = await axios.delete(config.baseUrl + url, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `JWT ${token}`
       },
       validateStatus: () => {
         return true
@@ -77,13 +139,13 @@ export const postAsyncProject = createAsyncThunk<
 })
 
 export interface IProject {
-  data: any[] | null
+  data: readonly any[]
   loading: string
   error: null | string
 }
 
 const initialState = {
-  data: null,
+  data: [],
   loading: 'IDLE',
   error: ''
 } as IProject
@@ -99,7 +161,7 @@ const ProjectSlice = createSlice({
     })
     builder.addCase(fetchAsyncProject.fulfilled, (state, { payload }) => {
       state.loading = HTTP_STATUS.FULFILLED
-      state.data = payload.data
+      state.data = payload.docs
     })
     builder.addCase(fetchAsyncProject.rejected, (state, action: PayloadAction<any>) => {
       if (action.payload) {
@@ -108,15 +170,14 @@ const ProjectSlice = createSlice({
       } else {
         // state.error = action.error
       }
-    }),
-      builder.addCase(postAsyncProject.pending, state => {
-        // The type signature on action.payload matches what we passed into the generic for `normalize`, allowing us to access specific properties on `payload.articles` if desired
-        state.loading = HTTP_STATUS.PENDING
-      })
+      state.loading = HTTP_STATUS.REJECTED
+    })
+    builder.addCase(postAsyncProject.pending, state => {
+      // The type signature on action.payload matches what we passed into the generic for `normalize`, allowing us to access specific properties on `payload.articles` if desired
+      state.loading = HTTP_STATUS.PENDING
+    })
     builder.addCase(postAsyncProject.fulfilled, state => {
       state.loading = HTTP_STATUS.FULFILLED
-
-      // state.data = payload.data
     })
     builder.addCase(postAsyncProject.rejected, (state, action: PayloadAction<any>) => {
       if (action.payload) {
@@ -125,6 +186,23 @@ const ProjectSlice = createSlice({
       } else {
         // state.error = action.error
       }
+      state.loading = HTTP_STATUS.REJECTED
+    })
+    builder.addCase(deleteAsyncProject.pending, state => {
+      // The type signature on action.payload matches what we passed into the generic for `normalize`, allowing us to access specific properties on `payload.articles` if desired
+      state.loading = HTTP_STATUS.PENDING
+    })
+    builder.addCase(deleteAsyncProject.fulfilled, state => {
+      state.loading = HTTP_STATUS.FULFILLED
+    })
+    builder.addCase(deleteAsyncProject.rejected, (state, action: PayloadAction<any>) => {
+      if (action.payload) {
+        // Since we passed in `MyKnownError` to `rejectValue` in `updateUser`, the type information will be available here.
+        state.error = action.payload.errorMessage
+      } else {
+        // state.error = action.error
+      }
+      state.loading = HTTP_STATUS.REJECTED
     })
   }
 })

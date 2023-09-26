@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -13,7 +13,8 @@ import { IconButton } from '@mui/material'
 
 // ** Custom Components Imports
 import PageHeader from 'src/@core/components/page-header'
-import TableHeader from 'src/views/apps/permissions/TableHeader'
+
+// import TableHeader from 'src/views/apps/permissions/TableHeader'
 
 // ** Third
 import moment from 'moment'
@@ -26,7 +27,6 @@ import { useAppDispatch, useAppSelector } from 'src/hooks/useTypedSelector'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
-import { fetchAsyncProject, getProjectData, getProjectLoading } from 'src/store/apps/project'
 import { Icon } from '@iconify/react'
 
 // ** Constants
@@ -35,6 +35,7 @@ import { HTTP_STATUS } from 'src/constants'
 // ** Component
 import DeleteDialog from 'src/views/projects/DeleteDialog'
 import UpdateProjectDrawer from 'src/views/projects/UpdateProjectDrawer'
+import { fetchAsyncPausedTasks, getPausedTaskData, getTaskLoading } from 'src/store/apps/tasks'
 
 interface CellType {
   row: ProjectRowType
@@ -81,7 +82,7 @@ const defaultColumns: GridColDef[] = [
 
 const ProejecTable = () => {
   // ** State
-  const [value, setValue] = useState<string>('')
+  // const [value, setValue] = useState<string>('')
   const [openDialog, setOpenDialog] = useState<boolean>(false)
   const [updateProjectOpen, setUpdateProjectOpen] = useState<boolean>(false)
 
@@ -89,9 +90,8 @@ const ProejecTable = () => {
 
   // ** Hooks
   const dispatch = useAppDispatch()
-  const fetchProjectData = useAppSelector(getProjectData)
-  const loadingProject = useAppSelector(getProjectLoading)
-  console.log(loadingProject)
+  const fetchPausedTaskData = useAppSelector(getPausedTaskData)
+  const loadingTask = useAppSelector(getTaskLoading)
 
   // const isLoading = useAppSelector(getTicketLoading)
   const auth = useAuth()
@@ -103,12 +103,12 @@ const ProejecTable = () => {
   const handleClickOpenDialog = () => setOpenDialog(!openDialog)
 
   const userInfo = {
-    url: '/projects/read',
+    url: '/tasks/pause',
     token: token
   }
 
   useEffect(() => {
-    dispatch(fetchAsyncProject(userInfo))
+    dispatch(fetchAsyncPausedTasks(userInfo))
       .unwrap()
       .then(originalPromiseResult => {
         console.log(originalPromiseResult)
@@ -121,9 +121,9 @@ const ProejecTable = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleFilter = useCallback((val: string) => {
-    setValue(val)
-  }, [])
+  // const handleFilter = useCallback((val: string) => {
+  //   setValue(val)
+  // }, [])
 
   const columns: GridColDef[] = [
     ...defaultColumns,
@@ -163,24 +163,24 @@ const ProejecTable = () => {
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <PageHeader
-            title={<Typography sx={{ mb: 3, fontSize: '1.375rem', fontWeight: 700 }}>Projects</Typography>}
-            subtitle={<Typography sx={{ color: 'text.secondary' }}>You have total 10 Project List</Typography>}
+            title={<Typography sx={{ mb: 3, fontSize: '1.375rem', fontWeight: 700 }}>Pause task</Typography>}
+            subtitle={<Typography sx={{ color: 'text.secondary' }}>You have total 10 Pause Task</Typography>}
           />
         </Grid>
 
         <Grid item xs={12}>
-          {loadingProject === HTTP_STATUS.PENDING ? (
+          {loadingTask === HTTP_STATUS.PENDING ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
               <CircularProgress />
             </Box>
           ) : (
             <Card>
-              <TableHeader value={value} handleFilter={handleFilter} />
-              {fetchProjectData && fetchProjectData.length > 0 ? (
+              {/* <TableHeader value={value} handleFilter={handleFilter} /> */}
+              {fetchPausedTaskData && fetchPausedTaskData.length > 0 ? (
                 <DataGrid
                   autoHeight
                   getRowId={row => row.id}
-                  rows={fetchProjectData}
+                  rows={fetchPausedTaskData}
                   columns={columns}
                   disableRowSelectionOnClick
                   pageSizeOptions={[10, 25, 50]}
@@ -188,7 +188,7 @@ const ProejecTable = () => {
                   onPaginationModelChange={setPaginationModel}
                 />
               ) : (
-                <Typography sx={{ mb: 3, fontSize: '1.375rem', fontWeight: 700 }}>No Project Available</Typography>
+                <Typography sx={{ mb: 3, fontSize: '1.375rem', fontWeight: 700 }}>No Paused Task</Typography>
               )}
             </Card>
           )}

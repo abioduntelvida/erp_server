@@ -18,6 +18,14 @@ import Icon from 'src/@core/components/icon'
 
 // ** Image Imports
 import Avatar1 from '../../../../public/images/avatars/21.png'
+import { useEffect } from 'react'
+
+// ** Hooks
+import { useAuth } from 'src/hooks/useAuth'
+import { AppDispatch } from 'src/store'
+import { useDispatch } from 'react-redux'
+
+import { fetchAsyncAllUsers } from 'src/store/apps/user'
 
 const StyledList = styled(List)<ListProps>(({ theme }) => ({
   padding: 0,
@@ -56,6 +64,25 @@ const StyledList = styled(List)<ListProps>(({ theme }) => ({
 }))
 
 const CreateTicket = () => {
+  const auth = useAuth()
+  const token = auth.token
+
+  const dispatch = useDispatch<AppDispatch>()
+  const formData = {
+    url: '/users',
+    token: token
+  }
+  useEffect(() => {
+    dispatch(fetchAsyncAllUsers(formData))
+      .unwrap()
+      .then(originalPromiseResult => {
+        console.log(originalPromiseResult)
+
+        // toast.success(originalPromiseResult.message)
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <Grid item xs={12}>
       <Card>

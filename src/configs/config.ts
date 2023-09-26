@@ -11,7 +11,7 @@ const settings = {
   apiUrl: '',
   appName: 'ERP Platform',
   subject: 'ERP Platform',
-  baseUrl: 'https://new-telvida-erp.onrender.com/api/v1'
+  baseUrl: 'https://57ea-102-88-35-128.ngrok-free.app/api'
 } as ISettings
 
 export default settings

@@ -11,7 +11,8 @@ import Card from '@mui/material/Card'
 import Menu from '@mui/material/Menu'
 import Grid from '@mui/material/Grid'
 import Divider from '@mui/material/Divider'
-import { styled } from '@mui/material/styles'
+
+// import { styled } from '@mui/material/styles'
 import MenuItem from '@mui/material/MenuItem'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
@@ -34,9 +35,10 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 import CardStatisticsHorizontal from 'src/@core/components/card-statistics/card-stats-horizontal'
 
 // ** Utils Import
-import { getInitials } from 'src/@core/utils/get-initials'
+// import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Actions Imports
+import { useAuth } from 'src/hooks/useAuth'
 import { fetchData, deleteUser } from 'src/store/apps/users'
 
 // ** Third Party Components
@@ -52,6 +54,8 @@ import { CardStatsHorizontalProps } from 'src/@core/components/card-statistics/t
 // ** Custom Table Components Imports
 import TableHeader from 'src/views/apps/user/list/TableHeader'
 import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
+import { useAppSelector } from 'src/hooks/useTypedSelector'
+import { fetchAsyncAllUsers, getAllUsers } from 'src/store/apps/user'
 
 interface UserRoleType {
   [key: string]: { icon: string; color: string }
@@ -80,33 +84,33 @@ const userStatusObj: UserStatusType = {
   inactive: 'secondary'
 }
 
-const LinkStyled = styled(Link)(({ theme }) => ({
-  fontWeight: 600,
-  fontSize: '1rem',
-  cursor: 'pointer',
-  textDecoration: 'none',
-  color: theme.palette.text.secondary,
-  '&:hover': {
-    color: theme.palette.primary.main
-  }
-}))
+// const LinkStyled = styled(Link)(({ theme }) => ({
+//   fontWeight: 600,
+//   fontSize: '1rem',
+//   cursor: 'pointer',
+//   textDecoration: 'none',
+//   color: theme.palette.text.secondary,
+//   '&:hover': {
+//     color: theme.palette.primary.main
+//   }
+// }))
 
 // ** renders client column
-const renderClient = (row: UsersType) => {
-  if (row.avatar.length) {
-    return <CustomAvatar src={row.avatar} sx={{ mr: 3, width: 32, height: 32 }} />
-  } else {
-    return (
-      <CustomAvatar
-        skin='light'
-        color={row.avatarColor || 'primary'}
-        sx={{ mr: 3, width: 32, height: 32, fontSize: '.875rem' }}
-      >
-        {getInitials(row.fullName ? row.fullName : 'John Doe')}
-      </CustomAvatar>
-    )
-  }
-}
+// const renderClient = (row: UsersType) => {
+//   if (row.avatar.length) {
+//     return <CustomAvatar src={row.avatar} sx={{ mr: 3, width: 32, height: 32 }} />
+//   } else {
+//     return (
+//       <CustomAvatar
+//         skin='light'
+//         color={row.avatarColor || 'primary'}
+//         sx={{ mr: 3, width: 32, height: 32, fontSize: '.875rem' }}
+//       >
+//         {getInitials(row.fullName ? row.fullName : 'John Doe')}
+//       </CustomAvatar>
+//     )
+//   }
+// }
 
 const RowOptions = ({ id }: { id: number | string }) => {
   // ** Hooks
@@ -178,13 +182,12 @@ const columns: GridColDef[] = [
     field: 'fullName',
     headerName: 'User',
     renderCell: ({ row }: CellType) => {
-      const { fullName, email } = row
+      const { email } = row
 
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {renderClient(row)}
+          {/* {renderClient(row)} */}
           <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-            <LinkStyled href='/apps/user/view/account'>{fullName}</LinkStyled>
             <Typography noWrap variant='caption' sx={{ color: 'text.disabled' }}>
               {email}
             </Typography>
@@ -201,53 +204,28 @@ const columns: GridColDef[] = [
     renderCell: ({ row }: CellType) => {
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <CustomAvatar
+          {/* <CustomAvatar
             skin='light'
             sx={{ mr: 3, width: 30, height: 30 }}
             color={userRoleObj[row.role].color as ThemeColor}
           >
             <Icon fontSize={18} icon={userRoleObj[row.role].icon} />
-          </CustomAvatar>
+          </CustomAvatar> */}
           <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.role}
+            {row.role_name}
           </Typography>
         </Box>
       )
     }
   },
-  {
-    flex: 0.15,
-    minWidth: 120,
-    headerName: 'Plan',
-    field: 'currentPlan',
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap sx={{ fontWeight: 600, color: 'text.secondary', textTransform: 'capitalize' }}>
-          {row.currentPlan}
-        </Typography>
-      )
-    }
-  },
-  {
-    flex: 0.2,
-    minWidth: 185,
-    field: 'billing',
-    headerName: 'Billing',
-    renderCell: ({ row }: CellType) => {
-      return (
-        <Typography noWrap sx={{ color: 'text.secondary' }}>
-          {row.billing}
-        </Typography>
-      )
-    }
-  },
+
   {
     flex: 0.1,
     minWidth: 110,
     field: 'status',
     headerName: 'Status',
-    renderCell: ({ row }: CellType) => {
-      return <CustomChip rounded skin='light' size='small' label={row.status} color={userStatusObj[row.status]} />
+    renderCell: ({}: CellType) => {
+      return <CustomChip rounded skin='light' size='small' label={'active'} color={userStatusObj['active']} />
     }
   },
   {
@@ -271,18 +249,13 @@ const UserList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>) =
 
   // ** Hooks
   const dispatch = useDispatch<AppDispatch>()
-  const store = useSelector((state: RootState) => state.users)
 
-  useEffect(() => {
-    dispatch(
-      fetchData({
-        role,
-        status,
-        q: value,
-        currentPlan: plan
-      })
-    )
-  }, [dispatch, plan, role, status, value])
+  // const store = useSelector((state: RootState) => state.users)
+  const fetchAllUsers = useAppSelector(getAllUsers)
+  console.log(fetchAllUsers)
+  const auth = useAuth()
+
+  const token = auth.token
 
   const handleFilter = useCallback((val: string) => {
     setValue(val)
@@ -298,6 +271,15 @@ const UserList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>) =
 
   const handleStatusChange = useCallback((e: SelectChangeEvent) => {
     setStatus(e.target.value)
+  }, [])
+
+  useEffect(() => {
+    const formData = {
+      url: '/users',
+      token: token
+    }
+    dispatch(fetchAsyncAllUsers(formData))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
@@ -386,15 +368,19 @@ const UserList = ({ apiData }: InferGetStaticPropsType<typeof getStaticProps>) =
           </CardContent>
           <Divider sx={{ m: '0 !important' }} />
           <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />
-          <DataGrid
-            autoHeight
-            rows={store.data}
-            columns={columns}
-            disableRowSelectionOnClick
-            pageSizeOptions={[10, 25, 50]}
-            paginationModel={paginationModel}
-            onPaginationModelChange={setPaginationModel}
-          />
+          {fetchAllUsers && fetchAllUsers.length > 0 ? (
+            <DataGrid
+              autoHeight
+              rows={fetchAllUsers}
+              columns={columns}
+              disableRowSelectionOnClick
+              pageSizeOptions={[10, 25, 50]}
+              paginationModel={paginationModel}
+              onPaginationModelChange={setPaginationModel}
+            />
+          ) : (
+            <Typography sx={{ mb: 3, fontSize: '1.375rem', fontWeight: 700 }}>No Users Available</Typography>
+          )}
         </Card>
       </Grid>
 

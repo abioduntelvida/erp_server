@@ -33,12 +33,14 @@ import { useForm, Controller } from 'react-hook-form'
 // import { yupResolver } from '@hookform/resolvers/yup'
 
 // ** Hooks
-import { useAuth } from 'src/hooks/useAuth'
+// import { useAuth } from 'src/hooks/useAuth'
 import { AppDispatch } from 'src/store'
 import { useDispatch } from 'react-redux'
 import { getHelpDeskLoading, postAsyncHelpDesk } from 'src/store/apps/help-desk'
 import { useAppSelector } from 'src/hooks/useTypedSelector'
 import { HTTP_STATUS } from 'src/constants'
+import { getAllUsers } from 'src/store/apps/user'
+import { useAuth } from 'src/hooks/useAuth'
 
 const CustomInput: React.ForwardRefExoticComponent<RefAttributes<any>> | any = forwardRef((props, ref) => {
   return <TextField fullWidth {...props} inputRef={ref} autoComplete='off' />
@@ -46,7 +48,7 @@ const CustomInput: React.ForwardRefExoticComponent<RefAttributes<any>> | any = f
 
 interface UserData {
   title: string
-  assign: string[]
+  assign: string
   priority: string
   incident: string
   startDate: any
@@ -56,7 +58,7 @@ interface UserData {
 
 const defaultValues: UserData = {
   title: '',
-  assign: [],
+  assign: '',
   priority: '',
   incident: '',
   startDate: '',
@@ -75,23 +77,31 @@ const FormLayoutsSeparator = () => {
   const auth = useAuth()
   const dispatch = useDispatch<AppDispatch>()
 
-  const loading = useAppSelector(getHelpDeskLoading)
-
   const token = auth.token
 
+  console.log(token)
+
+  const loading = useAppSelector(getHelpDeskLoading)
+  const fetchAllUsers = useAppSelector(getAllUsers)
+
+  // const token = auth.token
+
   const onSubmit = (data: any) => {
-    const url = '/ticket/helpdesk/create'
+    const url = '/tickets'
     const formData = {
-      url: url,
       token: token,
+      url: url,
       title: data.title,
-      assign_to: [...data.assign],
+      assign_to: data.assign,
+      ticket_type: 'helpdesk',
       priority: data.priority,
       incident_type: data.incident,
       start_date: data.startDate,
       end_date: data.endDate,
       overview: data.overview
     }
+
+    console.log(formData)
 
     dispatch(postAsyncHelpDesk(formData))
       .unwrap()
@@ -136,15 +146,35 @@ const FormLayoutsSeparator = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <InputLabel id='form-layouts-separator-select-label' sx={{ mb: 3 }}>
-                Assign To
+                Who is Responsible?
               </InputLabel>
-              <Controller
-                name='assign'
-                control={control}
-                render={({ field: { value, onChange, onBlur } }) => (
-                  <TextField fullWidth value={value} onBlur={onBlur} onChange={onChange} placeholder='' />
-                )}
-              />
+              <FormControl fullWidth>
+                <InputLabel id='form-layouts-separator-select-label' sx={{ mb: 3 }}>
+                  Select{' '}
+                </InputLabel>
+                <Controller
+                  name='assign'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Select
+                      label='Who'
+                      placeholder='Select'
+                      id='form-layouts-separator-select'
+                      labelId='form-layouts-separator-select-label'
+                      onChange={onChange}
+                      value={value}
+                    >
+                      {fetchAllUsers &&
+                        fetchAllUsers.length > 0 &&
+                        fetchAllUsers?.map(user => (
+                          <MenuItem key={user.id} value={user.id}>
+                            {user.email}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  )}
+                />
+              </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
               <InputLabel id='form-layouts-separator-select-label' sx={{ mb: 3 }}>

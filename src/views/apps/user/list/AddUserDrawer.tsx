@@ -1,12 +1,12 @@
 // ** React Imports
-import { RefAttributes, forwardRef } from 'react'
 
 // ** MUI Imports
 import Drawer from '@mui/material/Drawer'
 import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
 import MenuItem from '@mui/material/MenuItem'
-import Chip from '@mui/material/Chip'
+
+// import Chip from '@mui/material/Chip'
 import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import IconButton from '@mui/material/IconButton'
@@ -21,7 +21,6 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
 // ** Third Party Imports
 // import * as yup from 'yup'
-import DatePicker from 'react-datepicker'
 
 // import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
@@ -40,7 +39,7 @@ import { useDispatch } from 'react-redux'
 // import { RootState, AppDispatch } from 'src/store'
 // import { UsersType } from 'src/types/apps/userTypes'
 import { useAuth } from 'src/hooks/useAuth'
-import { getUserLoading, postAsyncUser } from 'src/store/apps/user'
+import { fetchAsyncAllUsers, getUserLoading, postAsyncUser } from 'src/store/apps/user'
 import { toast } from 'react-hot-toast'
 
 // import { Grid } from '@mui/material'
@@ -49,6 +48,9 @@ import { toast } from 'react-hot-toast'
 import { useAppSelector } from 'src/hooks/useTypedSelector'
 import { HTTP_STATUS } from 'src/constants'
 import { AppDispatch } from 'src/store'
+import { useEffect, useMemo } from 'react'
+import { fetchAsyncRoles, getRolesData } from 'src/store/apps/roles'
+import { useSelector } from 'react-redux'
 
 interface SidebarAddUserType {
   open: boolean
@@ -56,15 +58,10 @@ interface SidebarAddUserType {
 }
 
 interface UserData {
-  first_name: string
-  last_name: string
-  dob: any
   email: string
   company: string
   password: string
-  confirm: string
-  role: string
-  permission: string[]
+  role: string[]
 }
 
 // const showErrors = (field: string, valueLen: number, min: number) => {
@@ -109,31 +106,12 @@ const Header = styled(Box)<BoxProps>(({ theme }) => ({
 //     .required()
 // })
 
-const CustomInput: React.ForwardRefExoticComponent<RefAttributes<any>> | any = forwardRef((props, ref) => {
-  return <TextField fullWidth {...props} inputRef={ref} autoComplete='off' />
-})
-
 const defaultValues: UserData = {
-  first_name: '',
-  last_name: '',
-  dob: '',
   email: '',
   password: '',
-  confirm: '',
   company: '',
-  role: '',
-  permission: []
+  role: []
 }
-
-const names = [
-  'create-task',
-  'update-task',
-  'update-ticket',
-  'create-ticket',
-  'update_project',
-  'create_project',
-  'delete-project'
-]
 
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8
@@ -160,6 +138,10 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
 
   const token = auth.token
 
+  const fetchRolesData = useSelector(getRolesData)
+
+  console.log(fetchRolesData)
+
   const {
     reset,
     control,
@@ -175,36 +157,35 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
   const onSubmit = (data: UserData) => {
     console.log(data)
 
-    const url = '/user/signup'
+    const url = '/users'
 
     const formData = {
       url: url,
       token: token,
-      last_name: data.last_name,
-      first_name: data.first_name,
-      date_of_birth: data.dob,
       email: data.email,
-      mobile_number: '09012345678',
       password: data.password,
-      password_confirmation: data.confirm,
       company: data.company,
-      role: data.role,
-      permission: data.permission
+      roles: data.role
     }
 
     dispatch(postAsyncUser(formData))
       .unwrap()
       .then(originalPromiseResult => {
+        const formData = {
+          url: '/users',
+          token: token
+        }
         console.log(originalPromiseResult)
         originalPromiseResult.message && toast.success('User Created Successfully')
-
-        // reset()
+        dispatch(fetchAsyncAllUsers(formData))
+        toggle()
+        reset()
       })
       .catch(rejectedValueorSerializedError => {
         {
           rejectedValueorSerializedError && toast.error(rejectedValueorSerializedError.message)
 
-          // reset()
+          reset()
         }
       })
 
@@ -234,6 +215,21 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
     reset()
   }
 
+  const url = '/access_controls'
+
+  const userInfos = {
+    url: url,
+    token: token
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const userInfo = useMemo(() => userInfos, [])
+
+  useEffect(() => {
+    dispatch(fetchAsyncRoles(userInfo))
+      .unwrap()
+      .then(r => console.log(r))
+  }, [dispatch, userInfo])
+
   return (
     <Drawer
       open={open}
@@ -252,46 +248,6 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
       <DatePickerWrapper>
         <Box sx={{ p: 5 }}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <FormControl fullWidth sx={{ mb: 6 }}>
-              <Controller
-                name='first_name'
-                control={control}
-                rules={{ required: true }}
-                render={({ field: { value, onChange } }) => (
-                  <TextField
-                    value={value}
-                    label='First Name'
-                    onChange={onChange}
-                    placeholder='John Doe'
-                    error={Boolean(errors.first_name)}
-                  />
-                )}
-              />
-              {errors.first_name && (
-                <FormHelperText sx={{ color: 'error.main' }}>{errors.first_name.message}</FormHelperText>
-              )}
-            </FormControl>
-
-            <FormControl fullWidth sx={{ mb: 6 }}>
-              <Controller
-                name='last_name'
-                control={control}
-                rules={{ required: true }}
-                render={({ field: { value, onChange } }) => (
-                  <TextField
-                    value={value}
-                    label='Last Name'
-                    onChange={onChange}
-                    placeholder='John Doe'
-                    error={Boolean(errors.last_name)}
-                  />
-                )}
-              />
-              {errors.last_name && (
-                <FormHelperText sx={{ color: 'error.main' }}>{errors.last_name.message}</FormHelperText>
-              )}
-            </FormControl>
-
             <FormControl fullWidth sx={{ mb: 6 }}>
               <Controller
                 name='email'
@@ -328,27 +284,6 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
               {errors.company && <FormHelperText sx={{ color: 'error.main' }}>{errors.company.message}</FormHelperText>}
             </FormControl>
             <FormControl fullWidth sx={{ mb: 6 }}>
-              {/* <InputLabel id='form-layouts-separator-select-label' sx={{ mb: 3 }}>
-                  Start Date{' '}
-                </InputLabel> */}
-              <Controller
-                name='dob'
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <DatePicker
-                    selected={value}
-                    showYearDropdown
-                    showMonthDropdown
-                    placeholderText='MM-DD-YYYY'
-                    customInput={<CustomInput label='Pick Date' />}
-                    id='form-layouts-separator-date'
-                    onChange={onChange}
-                    value={value}
-                  />
-                )}
-              />
-            </FormControl>
-            <FormControl fullWidth sx={{ mb: 6 }}>
               <Controller
                 name='password'
                 control={control}
@@ -363,9 +298,11 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
                   />
                 )}
               />
-              {errors.confirm && <FormHelperText sx={{ color: 'error.main' }}>{errors.confirm.message}</FormHelperText>}
+              {errors.password && (
+                <FormHelperText sx={{ color: 'error.main' }}>{errors.password.message}</FormHelperText>
+              )}
             </FormControl>
-            <FormControl fullWidth sx={{ mb: 6 }}>
+            {/* <FormControl fullWidth sx={{ mb: 6 }}>
               <Controller
                 name='confirm'
                 control={control}
@@ -381,9 +318,8 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
                 )}
               />
               {errors.confirm && <FormHelperText sx={{ color: 'error.main' }}>{errors.confirm.message}</FormHelperText>}
-            </FormControl>
-
-            <FormControl fullWidth sx={{ mb: 6 }}>
+            </FormControl> */}
+            {/* <FormControl fullWidth sx={{ mb: 6 }}>
               <InputLabel id='role-select'>Select Role</InputLabel>
               <Controller
                 name='role'
@@ -399,22 +335,24 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
                     onChange={onChange}
                     inputProps={{ placeholder: 'Select Role' }}
                   >
-                    <MenuItem value='admin'>Admin</MenuItem>
-                    <MenuItem value='author'>Author</MenuItem>
-                    <MenuItem value='editor'>Editor</MenuItem>
-                    <MenuItem value='maintainer'>Maintainer</MenuItem>
-                    <MenuItem value='subscriber'>Subscriber</MenuItem>
+                    {fetchRolesData &&
+                      fetchRolesData.length > 0 &&
+                      fetchRolesData?.map(role => (
+                        <MenuItem key={role.id} value={role.id}>
+                          {role.role_name}
+                        </MenuItem>
+                      ))}
                   </Select>
                 )}
               />
-            </FormControl>
+            </FormControl> */}
 
             <FormControl fullWidth sx={{ mb: 6 }}>
               <InputLabel id='form-layouts-separator-select-label' sx={{ mb: 3 }}>
                 Select
               </InputLabel>
               <Controller
-                name='permission'
+                name='role'
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <Select
@@ -425,24 +363,25 @@ const SidebarAddUser = (props: SidebarAddUserType) => {
                     id='demo-multiple-chip'
                     onChange={onChange}
                     labelId='demo-multiple-chip-label'
-                    renderValue={selected => (
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                        {(selected as unknown as string[]).map(value => (
-                          <Chip key={value} label={value} sx={{ m: 0.75 }} />
-                        ))}
-                      </Box>
-                    )}
+
+                    // renderValue={selected => (
+                    //   <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                    //     {(selected as unknown as string[]).map(value => (
+                    //       <Chip key={value} label={value} sx={{ m: 0.75 }} />
+                    //     ))}
+                    //   </Box>
+                    // )}
                   >
-                    {names.map(name => (
-                      <MenuItem key={name} value={name}>
-                        {name}
-                      </MenuItem>
-                    ))}
+                    {fetchRolesData &&
+                      fetchRolesData?.map(role => (
+                        <MenuItem key={role.id} value={role.id}>
+                          {role.role_name}
+                        </MenuItem>
+                      ))}
                   </Select>
                 )}
               />
             </FormControl>
-
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Button size='large' type='submit' variant='contained' sx={{ mr: 3 }}>
                 {loading === HTTP_STATUS.PENDING ? <ThreeDots width={40} className='loading-circle' /> : 'Submit'}

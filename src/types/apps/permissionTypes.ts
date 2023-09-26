@@ -1,7 +1,6 @@
 export type PermissionRowType = {
-  _id: number
-  permission: string
-  permission_description: string
+  id: number
+  resource: string
 }
 
 export type PermissionRowsType = {

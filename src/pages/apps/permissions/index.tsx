@@ -30,13 +30,13 @@ import PageHeader from 'src/@core/components/page-header'
 import TableHeader from 'src/views/apps/permissions/TableHeader'
 
 // ** Types Imports
-import { RootState, AppDispatch } from 'src/store'
+import { AppDispatch } from 'src/store'
 import { PermissionRowType } from 'src/types/apps/permissionTypes'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
-import { deleteAsyncPermission, fetchAsyncPermissions } from 'src/store/apps/permissions'
-import { toast } from 'react-hot-toast'
+import { fetchAsyncPermissions, getPermissionsData } from 'src/store/apps/permissions'
+import DeleteDialog from 'src/views/permission/DeleteDialog'
 
 interface CellType {
   row: PermissionRowType
@@ -46,68 +46,80 @@ const PermissionsTable = () => {
   // ** State
   const [value, setValue] = useState<string>('')
   const [editValue, setEditValue] = useState<string>('')
+  const [openDialog, setOpenDialog] = useState<boolean>(false)
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
 
   // ** Hooks
   const auth = useAuth()
   const dispatch = useDispatch<AppDispatch>()
-  const permissionsData = useSelector((state: RootState) => state?.permissions?.data)
+  const permissionsData = useSelector(getPermissionsData)
+  console.log(permissionsData)
   const token = auth.token
+
+  // ** Delete
+  const handleClickOpenDialog = () => setOpenDialog(!openDialog)
 
   const defaultColumns: GridColDef[] = [
     {
       flex: 0.25,
-      field: 'permission',
+      field: 'docs.id',
       minWidth: 240,
       headerName: 'Name',
-      renderCell: ({ row }: CellType) => <Typography sx={{ color: 'text.secondary' }}>{row.permission}</Typography>
+      renderCell: ({ row }: CellType) => <Typography sx={{ color: 'text.secondary' }}>{row.id}</Typography>
     },
     {
       flex: 0.25,
       minWidth: 215,
       field: 'permission_description',
       headerName: 'Description',
-      renderCell: ({ row }: CellType) => (
-        <Typography sx={{ color: 'text.secondary' }}>{row.permission_description}</Typography>
-      )
-    },
-    {
-      flex: 0.15,
-      minWidth: 115,
-      sortable: false,
-      field: '_id',
-      headerName: 'Actions',
-      renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton onClick={() => handleDelete(row._id)}>
-            <Icon fontSize={20} icon='bx:trash' />
-          </IconButton>
-        </Box>
-      )
+      renderCell: ({ row }: CellType) => <Typography sx={{ color: 'text.secondary' }}>{row.resource}</Typography>
     }
+
+    // {
+    //   flex: 0.15,
+    //   minWidth: 115,
+    //   sortable: false,
+    //   field: 'id',
+    //   headerName: 'Actions',
+    //   renderCell: ({ row }) => (
+    //     <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    //       <IconButton
+    //         onClick={e => {
+    //           e.preventDefault()
+
+    //           handleClickOpenDialog()
+    //           console.log(row.id)
+    //         }}
+    //       >
+    //         <Icon fontSize={20} icon='bx:trash' />
+    //       </IconButton>
+    //       <DeleteDialog id={row.id} openDialog={openDialog} setOpenDialog={setOpenDialog} />
+    //     </Box>
+    //   )
+    // }
   ]
 
-  const handleDelete = (id: string) => {
-    const userInfo = {
-      url: '/permission/',
-      token: token,
-      id: id
-    }
+  // const handleDelete = (id: string) => {
+  //   const userInfo = {
+  //     url: '/permission/',
+  //     token: token,
+  //     id: id
+  //   }
 
-    const userInfos = {
-      url: url,
-      token: token
-    }
-    dispatch(deleteAsyncPermission(userInfo))
-      .unwrap()
-      .then(originalPromiseResult => {
-        originalPromiseResult && toast.error('Permission deleted successfully')
-        dispatch(fetchAsyncPermissions(userInfos))
-      })
-  }
+  //   const userInfos = {
+  //     url: url,
+  //     token: token
+  //   }
+  //   dispatch(deleteAsyncPermission(userInfo))
+  //     .unwrap()
+  //     .then(originalPromiseResult => {
+  //       originalPromiseResult && toast.error('Permission deleted successfully')
+  //       dispatch(fetchAsyncPermissions(userInfos))
+  //     })
+  // }
 
-  const url = '/permission/all'
+  const url = '/resources'
 
   const userInfos = {
     url: url,
@@ -141,7 +153,29 @@ const PermissionsTable = () => {
     e.preventDefault()
   }
 
-  const columns: GridColDef[] = [...defaultColumns]
+  const columns: GridColDef[] = [
+    ...defaultColumns,
+    {
+      flex: 0.15,
+      minWidth: 115,
+      sortable: false,
+      field: 'actions',
+      headerName: 'Actions',
+      renderCell: ({ row }: CellType) => (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton
+            onClick={e => {
+              e.preventDefault()
+              handleClickOpenDialog()
+            }}
+          >
+            <Icon fontSize={20} icon='bx:trash' />
+          </IconButton>
+          <DeleteDialog id={row.id} openDialog={openDialog} setOpenDialog={setOpenDialog} />
+        </Box>
+      )
+    }
+  ]
 
   return (
     <>
@@ -161,7 +195,7 @@ const PermissionsTable = () => {
             <TableHeader value={value} handleFilter={handleFilter} isModal />
             <DataGrid
               autoHeight
-              getRowId={row => row._id}
+              getRowId={row => row.id}
               rows={permissionsData}
               columns={columns}
               disableRowSelectionOnClick
