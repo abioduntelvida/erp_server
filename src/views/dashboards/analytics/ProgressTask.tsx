@@ -27,17 +27,17 @@ import { useAppDispatch, useAppSelector } from 'src/hooks/useTypedSelector'
 // import OptionsMenu from 'src/@core/components/option-menu'
 import Task from './components/Task'
 
-type TicketId = {
-  title: string
-}
+// type TicketId = {
+//   title: string
+// }
 
-interface DataType {
-  id: string
-  ticket_id: TicketId
-  milestone: string
-  task_name: string
-  assign_to: string
-}
+// interface DataType {
+//   id: string
+//   ticket_id: TicketId
+//   milestone: string
+//   task_name: string
+//   assign_to: string
+// }
 
 // const data: DataType[] = []
 
@@ -109,7 +109,7 @@ const ProgressTask = () => {
         <CardContent sx={{ mt: 3 }}>
           {data &&
             data?.length > 0 &&
-            data.map((item: DataType, index: number) => {
+            data.map((item: any, index: number) => {
               return <Task key={item.id} item={item} data={data} index={index} />
             })}
         </CardContent>

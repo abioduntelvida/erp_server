@@ -31,11 +31,16 @@ type TicketId = {
   title: string
 }
 
+type AssignTo = {
+  email: string
+}
+
 interface DataType {
   id: string
   ticket_id: TicketId
   milestone: string
   task_name: string
+  assign_to: AssignTo
 }
 
 // const data: DataType[] = []

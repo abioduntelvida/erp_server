@@ -15,6 +15,7 @@ export type UsersType = {
   username: string
   currentPlan: string
   avatarColor?: ThemeColor
+  role_name?: string
 }
 
 export type RolesType = {

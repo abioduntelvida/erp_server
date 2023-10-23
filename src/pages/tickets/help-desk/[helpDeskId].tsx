@@ -1,6 +1,7 @@
 // ** React Imports
-import React, { RefAttributes, forwardRef, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import React, { RefAttributes, forwardRef, useState } from 'react'
+
+// import { useRouter } from 'next/router'
 
 // ** MUI Imports
 import Card from '@mui/material/Card'
@@ -25,11 +26,10 @@ import DatePicker from 'react-datepicker'
 import { ThreeDots } from 'react-loading-icons'
 
 // ** Types
-// import { DateType } from 'src/types/forms/reactDatepickerTypes'
 
 // ** Third Party Imports
-import { useDispatch } from 'react-redux'
-import { toast } from 'react-hot-toast'
+// import { useDispatch } from 'react-redux'
+// import { toast } from 'react-hot-toast'
 
 // import { toast } from 'react-hot-toast'
 import { useForm, Controller } from 'react-hook-form'
@@ -37,15 +37,16 @@ import { useForm, Controller } from 'react-hook-form'
 // import { yupResolver } from '@hookform/resolvers/yup'
 
 // ** Hooks
-import { useAuth } from 'src/hooks/useAuth'
+// import { useAuth } from 'src/hooks/useAuth'
 
 // import { AppDispatch } from 'src/store'
 // import { useDispatch } from 'react-redux'
 import { getHelpDeskLoading } from 'src/store/apps/help-desk'
 import { useAppSelector } from 'src/hooks/useTypedSelector'
 import { HTTP_STATUS } from 'src/constants'
-import { AppDispatch } from 'src/store'
-import { fetchAsyncTicketsDetails } from 'src/store/apps/tickets'
+
+// import { AppDispatch } from 'src/store'
+// import { fetchAsyncTicketsDetails } from 'src/store/apps/tickets'
 
 const CustomInput: React.ForwardRefExoticComponent<RefAttributes<any>> | any = forwardRef((props, ref) => {
   return <TextField fullWidth {...props} inputRef={ref} autoComplete='off' />
@@ -73,6 +74,7 @@ const defaultValues: UserData = {
 
 const FormLayoutsSeparator = () => {
   // ** States
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [data, setData] = useState<any[]>([])
 
   const { control, handleSubmit } = useForm({
@@ -81,14 +83,15 @@ const FormLayoutsSeparator = () => {
   })
 
   // ** Hooks
-  const auth = useAuth()
-  const router = useRouter()
-  const dispatch = useDispatch<AppDispatch>()
-  const params = router.query.helpDeskId
+  // const auth = useAuth()
+  // const router = useRouter()
+  // const dispatch = useDispatch<AppDispatch>()
+  // const params = router.query.helpDeskId
 
   // const dispatch = useDispatch<AppDispatch>()
   const loading = useAppSelector(getHelpDeskLoading)
-  const token = auth.token
+
+  // const token = auth.token
 
   const onSubmit = () => {
     // const url = '/ticket/helpdesk/create'
@@ -118,27 +121,25 @@ const FormLayoutsSeparator = () => {
     //   })
   }
 
-  const ticketInfo = {
-    url: `/ticket/helpdesk/${params}`,
-    token: token
-  }
-  useEffect(() => {
-    dispatch(fetchAsyncTicketsDetails(ticketInfo))
-      .unwrap()
-      .then(originalPromiseResult => {
-        // console.log(originalPromiseResult.status)
-        // originalPromiseResult.status === 200 &&
+  // const ticketInfo = {
+  //   url: `/ticket/helpdesk/${params}`,
+  //   token: token
+  // }
 
-        setData(originalPromiseResult.data)
-      })
-      .catch(rejectedValueorSerializedError => {
-        console.log(rejectedValueorSerializedError.message)
-        {
-          rejectedValueorSerializedError && toast.error(rejectedValueorSerializedError.message)
-        }
-      })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // useEffect(() => {
+  //   dispatch(fetchAsyncTicketsDetails(ticketInfo))
+  //     .unwrap()
+  //     .then(originalPromiseResult => {
+  //       setData(originalPromiseResult.data)
+  //     })
+  //     .catch(rejectedValueorSerializedError => {
+  //       console.log(rejectedValueorSerializedError.message)
+  //       {
+  //         rejectedValueorSerializedError && toast.error(rejectedValueorSerializedError.message)
+  //       }
+  //     })
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
   console.log(data)
 

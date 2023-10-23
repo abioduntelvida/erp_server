@@ -11,12 +11,10 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 
 // ** Types
-import { useAppDispatch } from 'src/hooks/useTypedSelector'
-import { deleteAsyncProject, fetchAsyncProject } from 'src/store/apps/project'
+// import { useAppDispatch } from 'src/hooks/useTypedSelector'
 
 // ** Hooks
 import { useAuth } from 'src/hooks/useAuth'
-import { fetchAsyncPermissions } from 'src/store/apps/permissions'
 
 interface IDeleteDialogProps {
   id: number
@@ -26,7 +24,7 @@ interface IDeleteDialogProps {
 
 const DeleteDialog: FC<IDeleteDialogProps> = ({ id, openDialog, setOpenDialog }) => {
   // ** Hooks
-  const dispatch = useAppDispatch()
+  // const dispatch = useAppDispatch()
   const auth = useAuth()
 
   // ** Token

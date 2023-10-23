@@ -27,11 +27,13 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import Icon from 'src/@core/components/icon'
 
 // ** Store Imports
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 // ** Custom Components Imports
 import CustomChip from 'src/@core/components/mui/chip'
-import CustomAvatar from 'src/@core/components/mui/avatar'
+
+// import CustomAvatar from 'src/@core/components/mui/avatar'
+
 import CardStatisticsHorizontal from 'src/@core/components/card-statistics/card-stats-horizontal'
 
 // ** Utils Import
@@ -39,13 +41,13 @@ import CardStatisticsHorizontal from 'src/@core/components/card-statistics/card-
 
 // ** Actions Imports
 import { useAuth } from 'src/hooks/useAuth'
-import { fetchData, deleteUser } from 'src/store/apps/users'
+import { deleteUser } from 'src/store/apps/users'
 
 // ** Third Party Components
 import axios from 'axios'
 
 // ** Types Imports
-import { RootState, AppDispatch } from 'src/store'
+import { AppDispatch } from 'src/store'
 import { CardStatsType } from 'src/@fake-db/types'
 import { ThemeColor } from 'src/@core/layouts/types'
 import { UsersType } from 'src/types/apps/userTypes'
@@ -57,22 +59,22 @@ import AddUserDrawer from 'src/views/apps/user/list/AddUserDrawer'
 import { useAppSelector } from 'src/hooks/useTypedSelector'
 import { fetchAsyncAllUsers, getAllUsers } from 'src/store/apps/user'
 
-interface UserRoleType {
-  [key: string]: { icon: string; color: string }
-}
+// interface UserRoleType {
+//   [key: string]: { icon: string; color: string }
+// }
 
 interface UserStatusType {
   [key: string]: ThemeColor
 }
 
 // ** Vars
-const userRoleObj: UserRoleType = {
-  admin: { icon: 'bx:mobile-alt', color: 'error' },
-  author: { icon: 'bx:cog', color: 'warning' },
-  editor: { icon: 'bx:edit', color: 'info' },
-  maintainer: { icon: 'bx:pie-chart-alt', color: 'success' },
-  subscriber: { icon: 'bx:user', color: 'primary' }
-}
+// const userRoleObj: UserRoleType = {
+//   admin: { icon: 'bx:mobile-alt', color: 'error' },
+//   author: { icon: 'bx:cog', color: 'warning' },
+//   editor: { icon: 'bx:edit', color: 'info' },
+//   maintainer: { icon: 'bx:pie-chart-alt', color: 'success' },
+//   subscriber: { icon: 'bx:user', color: 'primary' }
+// }
 
 interface CellType {
   row: UsersType

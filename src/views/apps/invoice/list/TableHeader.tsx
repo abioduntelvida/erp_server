@@ -6,13 +6,13 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 
-interface TableHeaderProps {
-  value: string
-  handleFilter: (val: string) => void
-  toggleTaskDrawer: () => void
-}
+// interface TableHeaderProps {
+//   value: string
+//   handleFilter: (val: string) => void
+//   toggleTaskDrawer: () => void
+// }
 
-const TableHeader = (props: TableHeaderProps) => {
+const TableHeader = (props: any) => {
   // ** Props
   const { value, handleFilter, toggleTaskDrawer } = props
 

@@ -118,13 +118,13 @@ const columns: GridColDef[] = [
     field: 'assignedTo',
     headerName: 'Controls',
     renderCell: ({ row }: CellType) => {
-      return row.permission.map((access: string, index: number) => (
+      return row.permission.map((access: any, index: number) => (
         <CustomChip
           rounded
           size='small'
           key={index}
           skin='light'
-          color={colors[access.action]}
+          color={colors[access?.action]}
           label={access?.action?.replace('-', ' ')}
           sx={{ '&:not(:last-of-type)': { mr: 2 } }}
         />
