@@ -11,7 +11,7 @@ const settings = {
   apiUrl: '',
   appName: 'ERP Platform',
   subject: 'ERP Platform',
-  baseUrl: 'https://57ea-102-88-35-128.ngrok-free.app/api'
+  baseUrl: '172.19.2.11:4000/api'
 } as ISettings
 
 export default settings

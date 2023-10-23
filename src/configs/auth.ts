@@ -1,6 +1,6 @@
 export default {
   meEndpoint: '/auth/me',
-  loginEndpoint: 'https://57ea-102-88-35-128.ngrok-free.app/api/users/login',
+  loginEndpoint: '172.19.2.11:4000/api/users/login',
   registerEndpoint: '/jwt/register',
   storageTokenKeyName: 'accessToken',
   storageDatekeyName: 'userData',
