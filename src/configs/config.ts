@@ -11,7 +11,7 @@ const settings = {
   apiUrl: '',
   appName: 'ERP Platform',
   subject: 'ERP Platform',
-  baseUrl: '172.19.2.11:4000/api'
+  baseUrl: 'http://172.19.2.11:4000/api'
 } as ISettings
 
 export default settings

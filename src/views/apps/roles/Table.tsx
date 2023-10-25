@@ -202,7 +202,7 @@ const UserList = () => {
           <TableHeader plan={plan} value={value} handleFilter={handleFilter} handlePlanChange={handlePlanChange} />
           <DataGrid
             autoHeight
-            rows={fetchRolesData}
+            rows={fetchRolesData?.length > 0 && fetchRolesData ? fetchRolesData : []}
             columns={columns}
             disableRowSelectionOnClick
             pageSizeOptions={[10, 25, 50]}
